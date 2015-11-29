@@ -10,7 +10,7 @@ import com.batmad.game.States.GameStateManager;
 import com.batmad.game.States.MenuState;
 
 public class FlappyDefense extends ApplicationAdapter {
-	public static final int WIDTH = 800;
+	public static final int WIDTH = 100;
 	public static final int HEIGHT = 480;
 
 	public static final String TITLE = "Flappy Bird";
