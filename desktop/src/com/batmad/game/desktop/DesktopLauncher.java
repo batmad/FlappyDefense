@@ -8,7 +8,7 @@ public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.height = FlappyDefense.HEIGHT;
-		config.width = 800;
+		config.width = FlappyDefense.WIDTH;
 		config.title = FlappyDefense.TITLE;
 		new LwjglApplication(new FlappyDefense(), config);
 	}

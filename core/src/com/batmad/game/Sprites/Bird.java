@@ -23,7 +23,10 @@ public class Bird {
     private Animation birdAnimation;
     private Texture texture;
     private Sound flap;
-    private int birdY;
+    private int birdLifes;
+    private boolean isOverEdge;
+
+
 
     public Bird(int x, int y){
         position = new Vector3(x,y,0);
@@ -32,17 +35,16 @@ public class Bird {
         birdAnimation = new Animation(new TextureRegion(texture), 3, 0.5f);
         bounds = new Rectangle(x, y, texture.getWidth()/3, texture.getHeight()/3);
         flap = Gdx.audio.newSound(Gdx.files.internal("sfx_wing.ogg"));
+        isOverEdge = false;
+        birdLifes = 15;
     }
 
     public Bird(){
-        Random rand = new Random();
-        int y = MIN_HEIGHT + rand.nextInt(FlappyDefense.HEIGHT - MIN_HEIGHT);
-        position = new Vector3(-rand.nextInt(100),y,0);
-        velocity = new Vector3(0,0,0);
-        texture = new Texture("birdanimation.png");
-        birdAnimation = new Animation(new TextureRegion(texture), 3, 0.5f);
-        bounds = new Rectangle(0, y, texture.getWidth()/3, texture.getHeight()/3);
-        flap = Gdx.audio.newSound(Gdx.files.internal("sfx_wing.ogg"));
+        this(-(new Random().nextInt(100)), MIN_HEIGHT - (new Random().nextInt(FlappyDefense.HEIGHT - MIN_HEIGHT*2)));
+    }
+
+    public Bird(int x){
+        this(-x, MIN_HEIGHT - (new Random().nextInt(FlappyDefense.HEIGHT - MIN_HEIGHT*2)));
     }
 
     public void update(float dt){
@@ -65,6 +67,14 @@ public class Bird {
 
     public TextureRegion getTexture(){
         return birdAnimation.getFrame();
+    }
+
+    public boolean isOverEdge() {
+        return isOverEdge;
+    }
+
+    public void setIsOverEdge(boolean isOverEdge) {
+        this.isOverEdge = isOverEdge;
     }
 
     public void jump(){
