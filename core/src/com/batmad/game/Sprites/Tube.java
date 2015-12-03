@@ -21,6 +21,7 @@ public class Tube {
     private Random rand;
     private boolean isGrowed;
     private int damage;
+    private int fireRate;
 
 
 
@@ -44,6 +45,8 @@ public class Tube {
         fieldOfView = new Rectangle(x + topTube.getWidth()/2 - 50, posBotTube.y, 100, 480);
 
         damage = 5;
+        fireRate = 500;
+
 
     }
 
@@ -91,6 +94,9 @@ public class Tube {
         return boundsTop;
     }
 
+    public int getFireRate() {
+        return fireRate;
+    }
 
     public void reposition(float x){
         posTopTube.set(x, rand.nextInt(FLUCTUATION) + TUBE_GAP + LOWEST_OPENING);
@@ -103,8 +109,10 @@ public class Tube {
         return player.overlaps(fieldOfView);
     }
 
-    public void fire(){
+    public Bullet fire(Rectangle target){
         //return damage;
+        Bullet bullet = new Bullet(posTopTube.x, posTopTube.y, target);
+        return bullet;
     }
 
     public void dispose(){

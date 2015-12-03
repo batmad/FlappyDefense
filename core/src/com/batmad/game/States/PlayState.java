@@ -10,10 +10,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.batmad.game.FlappyDefense;
 import com.batmad.game.Sprites.Bird;
+import com.batmad.game.Sprites.Bullet;
 import com.batmad.game.Sprites.Tube;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * Created by tm on 19.11.2015.
@@ -31,9 +31,11 @@ public class PlayState extends State {
 
     private ArrayList<Tube> tubes;
     private ArrayList<Bird> birds;
-
+    private ArrayList<Bullet> bullets;
 
     private BitmapFont font;
+
+    private long clearSky;
 
     public PlayState(GameStateManager gsm) {
         super(gsm);
@@ -44,6 +46,7 @@ public class PlayState extends State {
 
         tubes = new ArrayList<Tube>();
         birds = new ArrayList<Bird>();
+        bullets = new ArrayList<Bullet>();
 
         font = new BitmapFont(Gdx.files.internal("berlin-40.fnt"));
 
@@ -94,9 +97,17 @@ public class PlayState extends State {
 
             for(Tube tube: tubes){
                 if(tube.collides(bird.getBounds())){
-                    bird.dispose();
+                    if(System.currentTimeMillis() > clearSky) {
+                        clearSky = System.currentTimeMillis() + tube.getFireRate();
+                        Bullet bullet = tube.fire(bird.getBounds());
+                        bullets.add(bullet);
+                        //bird.dispose();
+                    }
                 }
             }
+        }
+        for(Bullet bullet:bullets){
+            bullet.update(dt);
         }
 
         for(int i =0; i < tubes.size(); i++){
@@ -136,6 +147,9 @@ public class PlayState extends State {
             }
             for(Bird bird: birds) {
                 if (tube.collides(bird.getBounds())) {
+                    for(Bullet bullet: bullets) {
+                        sb.draw(bullet.getTexture(), bullet.getPosition().x, bullet.getPosition().y);
+                    }
                     sb.draw(tube.getTopTubeGrowed(), tube.getPosTopTubeGrowed().x, tube.getPosTopTubeGrowed().y);
                     sb.draw(tube.getBottomTubeGrowed(), tube.getPosBottomTubeGrowed().x, tube.getPosBottomTubeGrowed().y);
                 } else {
