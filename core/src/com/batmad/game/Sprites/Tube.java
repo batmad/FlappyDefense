@@ -22,6 +22,7 @@ public class Tube {
     private boolean isGrowed;
     private int damage;
     private int fireRate;
+    private long clearSky;
 
 
 
@@ -46,7 +47,7 @@ public class Tube {
 
         damage = 5;
         fireRate = 500;
-
+        clearSky = 0;
 
     }
 
@@ -98,6 +99,14 @@ public class Tube {
         return fireRate;
     }
 
+    public long getClearSky() {
+        return clearSky;
+    }
+
+    public void setClearSky(long clearSky) {
+        this.clearSky = clearSky;
+    }
+
     public void reposition(float x){
         posTopTube.set(x, rand.nextInt(FLUCTUATION) + TUBE_GAP + LOWEST_OPENING);
         posBotTube.set(x, posTopTube.y - TUBE_GAP - bottomTube.getHeight());
@@ -111,7 +120,7 @@ public class Tube {
 
     public Bullet fire(Rectangle target){
         //return damage;
-        Bullet bullet = new Bullet(posTopTube.x, posTopTube.y, target);
+        Bullet bullet = new Bullet(posTopTubeGrowed.x + topTubeGrowed.getWidth()/2, posTopTubeGrowed.y, target, damage);
         return bullet;
     }
 

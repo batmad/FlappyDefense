@@ -24,7 +24,7 @@ public class Bird {
     private Texture texture;
     private Sound flap;
     private int birdLifes;
-    private boolean isOverEdge;
+    private boolean isOverEdge, isDead;
 
 
 
@@ -77,17 +77,31 @@ public class Bird {
         this.isOverEdge = isOverEdge;
     }
 
+    public boolean isDead() {
+        return isDead;
+    }
+
+    public void setIsDead(boolean isDead) {
+        this.isDead = isDead;
+    }
+
     public void jump(){
         Random rand = new Random();
         velocity.y = 250 + rand.nextInt(100);
-
     }
 
     public void move(){
-        Random rand = new Random();
         if(position.y < MIN_HEIGHT) {
             jump();
         }
+    }
+
+    public void loseLife(int damage){
+        birdLifes -= damage;
+    }
+
+    public int getBirdLifes() {
+        return birdLifes;
     }
 
     public Rectangle getBounds(){

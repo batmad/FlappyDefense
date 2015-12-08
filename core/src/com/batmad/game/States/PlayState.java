@@ -35,7 +35,6 @@ public class PlayState extends State {
 
     private BitmapFont font;
 
-    private long clearSky;
 
     public PlayState(GameStateManager gsm) {
         super(gsm);
@@ -89,25 +88,43 @@ public class PlayState extends State {
         handleInput();
 
         for(Bird bird: birds) {
-            bird.update(dt);
-            if (bird.getPosition().x > 100 && !bird.isOverEdge()) {
-                lifes--;
-                bird.setIsOverEdge(true);
-            }
+            if(!bird.isDead()) {
+                bird.update(dt);
+                if (bird.getPosition().x > FlappyDefense.WIDTH && !bird.isOverEdge()) {
+                    lifes--;
+                    bird.setIsOverEdge(true);
+                }
 
-            for(Tube tube: tubes){
-                if(tube.collides(bird.getBounds())){
-                    if(System.currentTimeMillis() > clearSky) {
-                        clearSky = System.currentTimeMillis() + tube.getFireRate();
-                        Bullet bullet = tube.fire(bird.getBounds());
-                        bullets.add(bullet);
-                        //bird.dispose();
+                for (Tube tube : tubes) {
+                    if (tube.collides(bird.getBounds())) {
+                        if (System.currentTimeMillis() > tube.getClearSky()) {
+                            tube.setClearSky(System.currentTimeMillis() + tube.getFireRate());
+                            Bullet bullet = tube.fire(bird.getBounds());
+                            bullets.add(bullet);
+                            //bird.dispose();
+                        }
                     }
+                }
+                for (Bullet bullet : bullets) {
+                    //bullet.update(dt);
+                    if(!bullet.isFired()) {
+                        if (bullet.collides(bird.getBounds())) {
+                            bird.loseLife(bullet.getDamage());
+                            bullet.setIsFired(true);
+                        }
+                    }
+                }
+                if (bird.getBirdLifes() <= 0) {
+                    bird.dispose();
+                    bird.setIsDead(true);
                 }
             }
         }
+
         for(Bullet bullet:bullets){
-            bullet.update(dt);
+            if(!bullet.isFired()) {
+                bullet.update(dt);
+            }
         }
 
         for(int i =0; i < tubes.size(); i++){
@@ -130,7 +147,9 @@ public class PlayState extends State {
         sb.draw(background, background.getWidth(), 0);
         sb.draw(background, background.getWidth() * 2, 0);
         for(Bird bird: birds) {
-            sb.draw(bird.getTexture(), bird.getPosition().x, bird.getPosition().y);
+            if(!bird.isDead()) {
+                sb.draw(bird.getTexture(), bird.getPosition().x, bird.getPosition().y);
+            }
         }
         for(Tube tube: tubes) {
             if(touched(tube.getBoundsTop())){
@@ -146,16 +165,20 @@ public class PlayState extends State {
                 sb.draw(tube.getBottomTube(), tube.getPosBotTube().x, tube.getPosBotTube().y);
             }
             for(Bird bird: birds) {
-                if (tube.collides(bird.getBounds())) {
-                    for(Bullet bullet: bullets) {
-                        sb.draw(bullet.getTexture(), bullet.getPosition().x, bullet.getPosition().y);
+                if(!bird.isDead()) {
+                    if (tube.collides(bird.getBounds())) {
+                        sb.draw(tube.getTopTubeGrowed(), tube.getPosTopTubeGrowed().x, tube.getPosTopTubeGrowed().y);
+                        sb.draw(tube.getBottomTubeGrowed(), tube.getPosBottomTubeGrowed().x, tube.getPosBottomTubeGrowed().y);
+                    } else {
+                        sb.draw(tube.getTopTube(), tube.getPosTopTube().x, tube.getPosTopTube().y);
+                        sb.draw(tube.getBottomTube(), tube.getPosBotTube().x, tube.getPosBotTube().y);
                     }
-                    sb.draw(tube.getTopTubeGrowed(), tube.getPosTopTubeGrowed().x, tube.getPosTopTubeGrowed().y);
-                    sb.draw(tube.getBottomTubeGrowed(), tube.getPosBottomTubeGrowed().x, tube.getPosBottomTubeGrowed().y);
-                } else {
-                    sb.draw(tube.getTopTube(), tube.getPosTopTube().x, tube.getPosTopTube().y);
-                    sb.draw(tube.getBottomTube(), tube.getPosBotTube().x, tube.getPosBotTube().y);
                 }
+            }
+        }
+        for(Bullet bullet: bullets) {
+            if(!bullet.isFired()) {
+                sb.draw(bullet.getTexture(), bullet.getPosition().x, bullet.getPosition().y);
             }
         }
         sb.draw(ground, 0, FlappyDefense.GROUND_Y_OFFSET);
