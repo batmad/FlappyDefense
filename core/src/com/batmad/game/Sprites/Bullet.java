@@ -21,7 +21,7 @@ public class Bullet {
         bullet = new Texture("ball.png");
         position = new Vector2(x, y);
         bounds = new Rectangle(x,y, bullet.getWidth(), bullet.getHeight());
-        velocity = new Vector2(target.getX(), target.getY());
+        velocity = new Vector2(target.getX() + target.getWidth(), target.getY());
         velocity.sub(position.x, position.y);
         //range = Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
         this.target = target;
@@ -32,7 +32,10 @@ public class Bullet {
     public void update(float dt){
         //velocity.add(BULLET_SPEED * velocity.x, BULLET_SPEED * velocity.y);
         // velocity.scl(dt);
-        position.add(dt * velocity.x, dt  * velocity.y);
+        velocity.add(target.getX() + target.getWidth(), target.getY());
+        velocity.sub(position.x, position.y);
+        velocity.scl(dt);
+        position.add(dt * 400 * velocity.x, dt * 400 * velocity.y);
         bounds.setPosition(position.x, position.y);
     }
 

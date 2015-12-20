@@ -11,16 +11,13 @@ import java.util.Random;
  * Created by tm on 19.11.2015.
  */
 public class Tube {
-    private static final int FLUCTUATION = 130;
-    private static final int TUBE_GAP = 100;
-    private static final int LOWEST_OPENING = 120;
     public static final int TUBE_WIDTH = 52;
-    private Texture topTube, bottomTube, topTubeGrowed, bottomTubeGrowed;
-    private Vector2 posTopTube, posBotTube, posTopTubeGrowed, posBotTubeGrowed;
+    private Texture topTube = new Texture("toptubeclosed.png");
+    private Texture bottomTube = new Texture("bottomtubeclosed.png");
+    private Vector2 posTopTube, posBotTube;
     private Rectangle boundsTop, boundsBot, fieldOfView;
-    private Random rand;
-    private boolean isGrowed;
     private int damage;
+    private int value;
     private int fireRate;
     private long clearSky;
 
@@ -28,17 +25,8 @@ public class Tube {
 
 
     public Tube(float x){
-        topTube = new Texture("toptubeclosed.png");
-        bottomTube = new Texture("bottomtubeclosed.png");
-        topTubeGrowed = new Texture("toptubegrowed.png");
-        bottomTubeGrowed = new Texture("bottomtubegrowed.png");
-
-        rand = new Random();
-
         posTopTube = new Vector2(x, FlappyDefense.HEIGHT - topTube.getHeight());
         posBotTube = new Vector2(x, - FlappyDefense.GROUND_Y_OFFSET);
-        posTopTubeGrowed = new Vector2(x, FlappyDefense.HEIGHT - topTubeGrowed.getHeight());
-        posBotTubeGrowed = new Vector2(x, -FlappyDefense.GROUND_Y_OFFSET );
 
         boundsTop = new Rectangle(posTopTube.x, posTopTube.y, topTube.getWidth(), topTube.getHeight());
         boundsBot = new Rectangle(posBotTube.x, posBotTube.y, bottomTube.getWidth(), bottomTube.getHeight());
@@ -48,8 +36,18 @@ public class Tube {
         damage = 5;
         fireRate = 500;
         clearSky = 0;
+        value = 120;
 
     }
+
+    public Tube(float x, Texture topTube, Texture bottomTube, int damage) {
+        this(x);
+        this.topTube = topTube;
+        this.bottomTube = bottomTube;
+        this.damage = damage;
+        posTopTube = new Vector2(x, FlappyDefense.HEIGHT - topTube.getHeight());
+    }
+
 
     public Rectangle getFieldOfView() {
         return fieldOfView;
@@ -59,16 +57,9 @@ public class Tube {
         return topTube;
     }
 
-    public Texture getTopTubeGrowed() {
-        return topTubeGrowed;
-    }
 
     public Texture getBottomTube() {
         return bottomTube;
-    }
-
-    public Texture getBottomTubeGrowed() {
-        return bottomTubeGrowed;
     }
 
     public Vector2 getPosTopTube() {
@@ -77,14 +68,6 @@ public class Tube {
 
     public Vector2 getPosBotTube() {
         return posBotTube;
-    }
-
-    public Vector2 getPosTopTubeGrowed() {
-        return posTopTubeGrowed;
-    }
-
-    public Vector2 getPosBottomTubeGrowed() {
-        return posBotTubeGrowed;
     }
 
     public Rectangle getBoundsBot() {
@@ -107,11 +90,8 @@ public class Tube {
         this.clearSky = clearSky;
     }
 
-    public void reposition(float x){
-        posTopTube.set(x, rand.nextInt(FLUCTUATION) + TUBE_GAP + LOWEST_OPENING);
-        posBotTube.set(x, posTopTube.y - TUBE_GAP - bottomTube.getHeight());
-        boundsTop.setPosition(posTopTube.x, posTopTube.y);
-        boundsBot.setPosition(posBotTube.x, posBotTube.y);
+    public int getValue() {
+        return value;
     }
 
     public boolean collides(Rectangle player){
@@ -120,7 +100,7 @@ public class Tube {
 
     public Bullet fire(Rectangle target){
         //return damage;
-        Bullet bullet = new Bullet(posTopTubeGrowed.x + topTubeGrowed.getWidth()/2, posTopTubeGrowed.y, target, damage);
+        Bullet bullet = new Bullet(posBotTube.x + topTube.getWidth()/2, posBotTube .y, target, damage);
         return bullet;
     }
 
