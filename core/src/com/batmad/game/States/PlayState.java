@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.Vector2;
 //import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.math.Vector3;
 import com.batmad.game.FlappyDefense;
+import com.batmad.game.Sprites.ArrowTube;
 import com.batmad.game.Sprites.Bird;
 import com.batmad.game.Sprites.Bullet;
 import com.batmad.game.Sprites.Tube;
@@ -136,10 +137,13 @@ public class PlayState extends State{
                 for (Tube tube : tubes) {
                     if (tube.collides(bird.getBounds())) {
                         if (System.currentTimeMillis() > tube.getClearSky()) {
-                            tube.setClearSky(System.currentTimeMillis() + tube.getFireRate());
-                            Bullet bullet = tube.fire(bird.getBounds());
-                            bullets.add(bullet);
-                            //bird.dispose();
+                            if (!tube.getClass().getName().equals("com.batmad.game.Sprites.Tube")){
+                                System.out.println(tube.getClass().getName());
+                                tube.setClearSky(System.currentTimeMillis() + tube.getFireRate());
+                                Bullet bullet = tube.fire(bird.getBounds());
+                                bullets.add(bullet);
+                                //bird.dispose();
+                            }
                         }
                     }
                 }
@@ -172,22 +176,22 @@ public class PlayState extends State{
             if(isPopup){
                 if(touched(rectRightTop)) {
                     testTouchRightTop++;
-                    tubes.set(idOfTube, new TubeGrowed(tubes.get(idOfTube).getPosTopTube().x + 10));
+                    tubes.set(idOfTube, new ArrowTube(tubes.get(idOfTube).getPosTopTube().x + 10));
                     isPopup = false;
                 }
                 if(touched(rectLeftTop)) {
                     testTouchLeftTop++;
-                    tubes.set(idOfTube,new TubeGrowed(tubes.get(idOfTube).getPosTopTube().x));
+                    tubes.set(idOfTube,new ArrowTube(tubes.get(idOfTube).getPosTopTube().x));
                     isPopup = false;
                 }
                 if(touched(rectLeftBot)) {
                     testTouchLeftBot++;
-                    tubes.set(idOfTube,new TubeGrowed(tubes.get(idOfTube).getPosTopTube().x));
+                    tubes.set(idOfTube,new ArrowTube(tubes.get(idOfTube).getPosTopTube().x));
                     isPopup = false;
                 }
                 if(touched(rectRightBot)) {
                     testTouchRightBot++;
-                    tubes.set(idOfTube,new TubeGrowed(tubes.get(idOfTube).getPosTopTube().x));
+                    tubes.set(idOfTube,new ArrowTube(tubes.get(idOfTube).getPosTopTube().x));
                     isPopup = false;
                 }
             }
@@ -239,8 +243,13 @@ public class PlayState extends State{
         }
         for(Bullet bullet: bullets) {
             if(!bullet.isFired()) {
-                sb.draw(bullet.getTexture(), bullet.getPosition().x, bullet.getPosition().y);
+                if(bullet.getClass().getName().equals("com.batmad.game.Sprites.ArrowBullet")){
+                    sb.draw(new TextureRegion(bullet.getTexture()),bullet.getPosition().x,bullet.getPosition().y, bullet.getTexture().getWidth()/2, bullet.getTexture().getHeight()/2, bullet.getTexture().getWidth(),bullet.getTexture().getHeight(),1,1,200 + bullet.angle());
+                }else {
+                    sb.draw(bullet.getTexture(), bullet.getPosition().x, bullet.getPosition().y);
+                }
             }
+
         }
 
         font.draw(sb, "" + ((int)lifes), 750,40);

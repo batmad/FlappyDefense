@@ -9,24 +9,29 @@ import com.badlogic.gdx.math.Vector2;
  */
 public class Bullet {
     private static final int BULLET_SPEED = 60;
-    private Texture bullet;
+    private Texture bullet = new Texture("ball.png");
     private Vector2 position, velocity;
     private Rectangle bounds, target;
     private int damage;
     private boolean isFired;
     private double range;
 
-
     public Bullet(float x, float y, Rectangle target, int damage){
-        bullet = new Texture("ball.png");
+
         position = new Vector2(x, y);
         bounds = new Rectangle(x,y, bullet.getWidth(), bullet.getHeight());
-        velocity = new Vector2(target.getX() + target.getWidth(), target.getY());
+        velocity = new Vector2(target.getX() + target.getWidth()/2, target.getY());
         velocity.sub(position.x, position.y);
         //range = Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
         this.target = target;
         this.damage = damage;
         isFired = false;
+    }
+
+    public Bullet(float x, float y, Rectangle target, int damage, Texture bullet){
+        this(x,y,target,damage);
+        this.bullet = bullet;
+
     }
 
     public void update(float dt){
@@ -39,6 +44,9 @@ public class Bullet {
         bounds.setPosition(position.x, position.y);
     }
 
+    public float angle(){
+        return velocity.angle();
+    }
     public Vector2 getPosition(){
         return position;
     }

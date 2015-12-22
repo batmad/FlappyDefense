@@ -5,23 +5,23 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.batmad.game.FlappyDefense;
 
-import javax.xml.soap.Text;
-
-
 /**
- * Created by tm on 12.12.2015.
+ * Created by tm on 22.12.2015.
  */
-public class TubeGrowed extends Tube {
+public class ArrowTube extends Tube{
     static private Texture topTube = new Texture("toptubegrowed.png");
     static private Texture bottomTube = new Texture("bottomtubegrowed.png");
     Vector2 posTopTube, posBotTube;
-    Rectangle boundsBot, boundsTop, fieldOfView;
-    static private int damage = 15;
+    static private int damage = 2;
 
-    public TubeGrowed(float x) {
+    public ArrowTube(float x) {
         super(x, topTube, bottomTube, damage);
+        posBotTube = new Vector2(x, - FlappyDefense.GROUND_Y_OFFSET);
     }
 
-
-
+    public Bullet fire(Rectangle target){
+        //return damage;
+        Bullet bullet = new ArrowBullet(posBotTube.x , posBotTube.y + bottomTube.getHeight(), target, damage);
+        return bullet;
+    }
 }
