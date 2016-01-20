@@ -10,33 +10,32 @@ import com.batmad.game.FlappyDefense;
 
 import java.util.Random;
 
+
 /**
  * Created by tm on 19.11.2015.
  */
 public class Bird {
     public static final int GRAVITY = -15;
-    public static final int MOVEMENT = 100;
+    public int MOVEMENT = 100;
     private static final int MIN_HEIGHT = 200;
     private Vector3 position;
     private Vector3 velocity;
     private Rectangle bounds;
     private Animation birdAnimation;
-    private Texture texture;
+    private Texture texture = new Texture("birdanimation.png");;
     private Sound flap;
-    private int birdLifes;
-    private boolean isOverEdge, isDead;
-
+    protected int birdLifes = 15;
+    protected int gold = 20;
+    private boolean isOverEdge, isDead, isTarget = false;
 
 
     public Bird(int x, int y){
         position = new Vector3(x,y,0);
         velocity = new Vector3(0,0,0);
-        texture = new Texture("birdanimation.png");
         birdAnimation = new Animation(new TextureRegion(texture), 3, 0.5f);
         bounds = new Rectangle(x, y, texture.getWidth()/3, texture.getHeight()/3);
         flap = Gdx.audio.newSound(Gdx.files.internal("sfx_wing.ogg"));
         isOverEdge = false;
-        birdLifes = 15;
     }
 
     public Bird(){
@@ -44,21 +43,28 @@ public class Bird {
     }
 
     public Bird(int x){
-        this(-x, MIN_HEIGHT - (new Random().nextInt(FlappyDefense.HEIGHT - MIN_HEIGHT*2)));
+        this(-x, MIN_HEIGHT - (new Random().nextInt(80)));
+    }
+    public Bird(int x, Texture texture){
+        this(x);
+        this.texture = texture;
+        birdAnimation = new Animation(new TextureRegion(texture), 3,0.5f);
     }
 
     public void update(float dt){
-        birdAnimation.update(dt);
-        if(position.y > 0)
-            velocity.add(0, GRAVITY, 0);
-        velocity.scl(dt);
-        position.add(dt * MOVEMENT, velocity.y, 0);
-        if(position.y < 0){
-            position.y =0;
+        if(!isOverEdge && !isDead) {
+            birdAnimation.update(dt);
+            if (position.y > 0)
+                velocity.add(0, GRAVITY, 0);
+            velocity.scl(dt);
+            position.add(dt * MOVEMENT, velocity.y, 0);
+            if (position.y < 0) {
+                position.y = 0;
+            }
+            velocity.scl(1 / dt);
+            bounds.setPosition(position.x, position.y);
+            move();
         }
-        velocity.scl(1/dt);
-        bounds.setPosition(position.x, position.y);
-        move();
     }
 
     public Vector3 getPosition(){
@@ -88,6 +94,8 @@ public class Bird {
     public void jump(){
         Random rand = new Random();
         velocity.y = 250 + rand.nextInt(100);
+        if (position.x > 0 && position.x < FlappyDefense.WIDTH )
+            flap.play(0.05f);
     }
 
     public void move(){
@@ -104,8 +112,20 @@ public class Bird {
         return birdLifes;
     }
 
+    public int getGold() {
+        return gold;
+    }
+
     public Rectangle getBounds(){
         return bounds;
+    }
+
+    public boolean isTarget() {
+        return isTarget;
+    }
+
+    public void setIsTarget(boolean isTarget) {
+        this.isTarget = isTarget;
     }
 
     public void dispose(){

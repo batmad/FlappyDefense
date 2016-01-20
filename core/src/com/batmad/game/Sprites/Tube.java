@@ -20,7 +20,8 @@ public class Tube {
     private int value;
     private int fireRate;
     private long clearSky;
-
+    private Rectangle target;
+    private boolean hasTarget;
 
 
 
@@ -33,18 +34,20 @@ public class Tube {
 
         fieldOfView = new Rectangle(x + topTube.getWidth()/2 - 50, posBotTube.y, 100, 480);
 
-        damage = 5;
-        fireRate = 500;
+        //damage = 5;
+        //fireRate = 500;
         clearSky = 0;
         value = 120;
 
     }
 
-    public Tube(float x, Texture topTube, Texture bottomTube, int damage) {
+    public Tube(float x, Texture topTube, Texture bottomTube, int damage, int fireRate, int value) {
         this(x);
         this.topTube = topTube;
         this.bottomTube = bottomTube;
         this.damage = damage;
+        this.fireRate = fireRate;
+        this.value = value;
         posTopTube = new Vector2(x, FlappyDefense.HEIGHT - topTube.getHeight());
     }
 
@@ -100,12 +103,33 @@ public class Tube {
 
     public Bullet fire(Rectangle target){
         //return damage;
-        Bullet bullet = new Bullet(posBotTube.x + topTube.getWidth()/2, posBotTube .y, target, damage);
+        Bullet bullet = new Bullet(posBotTube.x + bottomTube.getWidth()/2, posBotTube.y + bottomTube.getHeight(), target, damage);
         return bullet;
+    }
+
+    public int getDamage(){
+        return damage;
     }
 
     public void dispose(){
         topTube.dispose();
         bottomTube.dispose();
     }
+
+    public Rectangle getTarget() {
+        return target;
+    }
+
+    public void setTarget(Rectangle target) {
+        this.target = target;
+    }
+
+    public boolean isHasTarget() {
+        return hasTarget;
+    }
+
+    public void setHasTarget(boolean hasTarget) {
+        this.hasTarget = hasTarget;
+    }
+
 }

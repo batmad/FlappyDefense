@@ -1,5 +1,7 @@
 package com.batmad.game.Sprites;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -14,7 +16,9 @@ public class Bullet {
     private Rectangle bounds, target;
     private int damage;
     private boolean isFired;
+    private boolean isDead;
     private double range;
+    private Sound sound;
 
     public Bullet(float x, float y, Rectangle target, int damage){
 
@@ -26,12 +30,13 @@ public class Bullet {
         this.target = target;
         this.damage = damage;
         isFired = false;
+        sound = Gdx.audio.newSound(Gdx.files.internal("cannon.mp3"));
     }
 
-    public Bullet(float x, float y, Rectangle target, int damage, Texture bullet){
-        this(x,y,target,damage);
+    public Bullet(float x, float y, Rectangle target, int damage, Texture bullet, Sound sound){
+        this(x, y, target, damage);
         this.bullet = bullet;
-
+        this.sound = sound;
     }
 
     public void update(float dt){
@@ -42,6 +47,9 @@ public class Bullet {
         velocity.scl(dt);
         position.add(dt * 400 * velocity.x, dt * 400 * velocity.y);
         bounds.setPosition(position.x, position.y);
+        if(Math.sqrt(Math.pow(velocity.x,2) + Math.pow(velocity.y,2)) < 0.05 ){
+            isDead = true;
+        }
     }
 
     public float angle(){
@@ -71,7 +79,15 @@ public class Bullet {
         return isFired;
     }
 
+    public boolean isDead() {
+        return isDead;
+    }
+
     public void setIsFired(boolean isFired) {
         this.isFired = isFired;
+    }
+
+    public void sound(){
+        sound.play();
     }
 }

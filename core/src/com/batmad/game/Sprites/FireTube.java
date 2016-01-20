@@ -6,24 +6,22 @@ import com.badlogic.gdx.math.Vector2;
 import com.batmad.game.FlappyDefense;
 
 /**
- * Created by tm on 22.12.2015.
+ * Created by tm on 08.01.2016.
  */
-public class ArrowTube extends Tube{
+public class FireTube extends Tube {
     static private Texture topTube = new Texture("toptubegrowed.png");
     static private Texture bottomTube = new Texture("bottomtubegrowed.png");
-    Vector2 posTopTube, posBotTube;
-    static private int damage = 5;
-    static private int fireRate = 500;
-    static private int value = 120;
+    static private int damage = 4;
+    static private int fireRate = 0;
+    static private int value = 160;
+    static private long noDamageTime;
+    Vector2 posBotTube;
 
-    public ArrowTube(float x) {
+
+    public FireTube(float x){
         super(x, topTube, bottomTube, damage, fireRate, value);
         posBotTube = new Vector2(x, - FlappyDefense.GROUND_Y_OFFSET);
     }
 
-    public Bullet fire(Rectangle target){
-        //return damage;
-        Bullet bullet = new ArrowBullet(posBotTube.x , posBotTube.y + bottomTube.getHeight(), target, damage);
-        return bullet;
-    }
+
 }

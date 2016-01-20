@@ -23,7 +23,7 @@ public class MenuState extends State {
         background = new Texture("bg.png");
         playBtn = new Texture("playbtn.png");
         defaultBtn = new Texture("defaultbtn.png");
-        font = new BitmapFont(Gdx.files.internal("berlin-40.fnt"));
+        font = new BitmapFont(Gdx.files.internal("flappybird-32.fnt"));
     }
 
 

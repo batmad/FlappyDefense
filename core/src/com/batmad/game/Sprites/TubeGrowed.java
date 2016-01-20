@@ -16,10 +16,12 @@ public class TubeGrowed extends Tube {
     static private Texture bottomTube = new Texture("bottomtubegrowed.png");
     Vector2 posTopTube, posBotTube;
     Rectangle boundsBot, boundsTop, fieldOfView;
-    static private int damage = 15;
+    static private int damage = 10;
+    static private int fireRate = 1500;
+    static private int value = 150;
 
     public TubeGrowed(float x) {
-        super(x, topTube, bottomTube, damage);
+        super(x, topTube, bottomTube, damage, fireRate, value);
     }
 
 
