@@ -40,9 +40,10 @@ public class Fire {
         emitter.setContinuous(true);
     }
 
-    public void stop(){
+    public void stop(float dt){
         //emitter.durationTimer = 0;
         emitter.setContinuous(false);
+        fire.update(dt);
     }
 
     public void setTarget(Rectangle target){

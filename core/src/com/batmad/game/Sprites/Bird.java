@@ -18,11 +18,11 @@ public class Bird {
     public static final int GRAVITY = -15;
     public int MOVEMENT = 100;
     private static final int MIN_HEIGHT = 200;
-    private Vector3 position;
-    private Vector3 velocity;
+    protected Vector3 position;
+    protected Vector3 velocity;
     private Rectangle bounds;
     private Animation birdAnimation;
-    private Texture texture = new Texture("birdanimation.png");;
+    protected Texture texture = new Texture("birdanimation.png");;
     private Sound flap;
     protected int birdLifes = 15;
     protected int gold = 20;

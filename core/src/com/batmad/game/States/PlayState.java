@@ -27,6 +27,7 @@ import com.batmad.game.Sprites.FastBird;
 import com.batmad.game.Sprites.Fire;
 import com.batmad.game.Sprites.FireTube;
 import com.batmad.game.Sprites.SlowBird;
+import com.batmad.game.Sprites.SprintBird;
 import com.batmad.game.Sprites.Tube;
 import com.batmad.game.Sprites.TubeGrowed;
 
@@ -157,7 +158,10 @@ public class PlayState extends State{
             }
             else if(i % 4 == 0){
                 birds.add(new SlowBird(i * 20));
-            }else {
+            }else if(i % 5 ==0){
+                birds.add(new SprintBird(i * 3 * 20));
+            }
+            else {
                 birds.add(new Bird(i * 3 * 20));
             }
         }
@@ -252,11 +256,12 @@ public class PlayState extends State{
                         else if(bird == target){
                             tube.setHasTarget(false);
                         }
-                        else if(birds.get(birdCount-1).getPosition().x > tube.getPosBotTube().x + tube.getBottomTube().getWidth()){
+                        //else if(birds.get(birdCount-1).getPosition().x > tube.getPosBotTube().x + tube.getBottomTube().getWidth()){
+                        else{
                             Fire fire = fires.get(idOfTube);
                             System.out.println("fire invisible");
-                            fire.stop();
-                            fire.update(dt);
+                            fire.stop(dt);
+                            //fire.update(dt);
                             //fire.setIsFired(true);
                         }
                     }
