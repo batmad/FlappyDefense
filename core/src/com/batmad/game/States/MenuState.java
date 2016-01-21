@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector3;
 import com.batmad.game.FlappyDefense;
 
 
@@ -16,6 +18,7 @@ public class MenuState extends State {
     private Texture playBtn;
     private Texture defaultBtn;
     private BitmapFont font;
+    private Rectangle startBtn, optionsBtn, hiscoreBtn;
 
     public MenuState(GameStateManager gsm) {
         super(gsm);
@@ -24,12 +27,15 @@ public class MenuState extends State {
         playBtn = new Texture("playbtn.png");
         defaultBtn = new Texture("defaultbtn.png");
         font = new BitmapFont(Gdx.files.internal("flappybird-32.fnt"));
+        startBtn = new Rectangle(cam.position.x - defaultBtn.getWidth()/2,cam.position.y - 70,defaultBtn.getWidth(), defaultBtn.getHeight());
+        //optionsBtn = new Rectangle(cam.position.x - defaultBtn.getWidth(),cam.position.y - 70,defaultBtn.getWidth(), defaultBtn.getHeight());
+        //hiscoreBtn = new Rectangle(cam.position.x - defaultBtn.getWidth(),cam.position.y - 70,defaultBtn.getWidth(), defaultBtn.getHeight());
     }
 
 
     @Override
     public void handleInput() {
-        if(Gdx.input.justTouched()){
+        if(touched(startBtn)){
             gsm.set(new PlayState(gsm));
         }
     }
@@ -65,6 +71,15 @@ public class MenuState extends State {
         GlyphLayout glyphLayout = new GlyphLayout();
         glyphLayout.setText(font,text);
         return glyphLayout.width;
+    }
+
+    public boolean touched(Rectangle rect) {
+        Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+        cam.unproject(touchPos);
+        if (rect.contains(touchPos.x, touchPos.y))
+            return true;
+        else
+            return false;
     }
 
     @Override
