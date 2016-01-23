@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
  * Created by tm on 20.01.2016.
  */
 public class SlowBird extends Bird {
-    static private Texture texture = new Texture("birdblack.png");
+    static private Texture texture = new Texture("bird/birdblack.png");
     private int MIN_HEIGHT = 225;
     private int MOVEMENT = 50;
     private int birdLifes = 30;

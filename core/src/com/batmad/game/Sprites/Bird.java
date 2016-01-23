@@ -22,7 +22,7 @@ public class Bird {
     protected Vector3 velocity;
     private Rectangle bounds;
     private Animation birdAnimation;
-    protected Texture texture = new Texture("birdanimation.png");;
+    protected Texture texture = new Texture("bird/birdanimation.png");;
     private Sound flap;
     protected int birdLifes = 15;
     protected int gold = 20;

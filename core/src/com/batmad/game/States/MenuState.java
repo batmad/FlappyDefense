@@ -18,7 +18,7 @@ public class MenuState extends State {
     private Texture playBtn;
     private Texture defaultBtn;
     private BitmapFont font;
-    private Rectangle startBtn, optionsBtn, hiscoreBtn;
+    private Rectangle startBtn, levelsBtn, hiscoreBtn;
 
     public MenuState(GameStateManager gsm) {
         super(gsm);
@@ -26,9 +26,9 @@ public class MenuState extends State {
         background = new Texture("bg.png");
         playBtn = new Texture("playbtn.png");
         defaultBtn = new Texture("defaultbtn.png");
-        font = new BitmapFont(Gdx.files.internal("flappybird-32.fnt"));
+        font = new BitmapFont(Gdx.files.internal("fonts/flappybird-32.fnt"));
         startBtn = new Rectangle(cam.position.x - defaultBtn.getWidth()/2,cam.position.y - 70,defaultBtn.getWidth(), defaultBtn.getHeight());
-        //optionsBtn = new Rectangle(cam.position.x - defaultBtn.getWidth(),cam.position.y - 70,defaultBtn.getWidth(), defaultBtn.getHeight());
+        levelsBtn = new Rectangle(cam.position.x - defaultBtn.getWidth()/2,cam.position.y - 140,defaultBtn.getWidth(), defaultBtn.getHeight());
         //hiscoreBtn = new Rectangle(cam.position.x - defaultBtn.getWidth(),cam.position.y - 70,defaultBtn.getWidth(), defaultBtn.getHeight());
     }
 
@@ -37,6 +37,8 @@ public class MenuState extends State {
     public void handleInput() {
         if(touched(startBtn)){
             gsm.set(new PlayState(gsm));
+        } else if(touched(levelsBtn)){
+            gsm.set(new LevelState(gsm));
         }
     }
 
@@ -58,9 +60,9 @@ public class MenuState extends State {
         sb.draw(defaultBtn, cam.position.x - defaultBtn.getWidth() / 2, cam.position.y - 70);
         float width = setFontWidth("START");
         font.draw(sb, "START", cam.position.x - width/2,cam.position.y - 25);
-        width = setFontWidth("OPTIONS");
+        width = setFontWidth("LEVELS");
         sb.draw(defaultBtn, cam.position.x - defaultBtn.getWidth() / 2, cam.position.y - 140);
-        font.draw(sb, "OPTIONS", cam.position.x - width/2,cam.position.y - 95);
+        font.draw(sb, "LEVELS", cam.position.x - width/2,cam.position.y - 95);
         width = setFontWidth("HISCORE");
         sb.draw(defaultBtn, cam.position.x - defaultBtn.getWidth() / 2, cam.position.y - 210);
         font.draw(sb, "HISCORE", cam.position.x - width/2,cam.position.y - 165);

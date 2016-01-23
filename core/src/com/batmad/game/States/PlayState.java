@@ -114,8 +114,8 @@ public class PlayState extends State{
 
         birdIterator = birds.iterator();
 
-        font = new BitmapFont(Gdx.files.internal("flappybird-32.fnt"));
-        shortFont = new BitmapFont(Gdx.files.internal("flappybird-12.fnt"));
+        font = new BitmapFont(Gdx.files.internal("fonts/flappybird-32.fnt"));
+        shortFont = new BitmapFont(Gdx.files.internal("fonts/flappybird-12.fnt"));
 
         fire = new ParticleEffect();
         fire.load(Gdx.files.internal("fireFD"), Gdx.files.internal(""));
