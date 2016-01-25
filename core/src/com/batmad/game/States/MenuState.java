@@ -36,7 +36,7 @@ public class MenuState extends State {
     @Override
     public void handleInput() {
         if(touched(startBtn)){
-            gsm.set(new PlayState(gsm));
+            //gsm.set(new PlayState(gsm));
         } else if(touched(levelsBtn)){
             gsm.set(new LevelState(gsm));
         }

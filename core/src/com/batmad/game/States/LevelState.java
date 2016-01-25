@@ -6,6 +6,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector3;
 import com.batmad.game.FlappyDefense;
 
 import java.util.HashMap;
@@ -23,11 +25,14 @@ public class LevelState extends State {
     float column1, column2, column3, column4, column5;
     HashMap<String, Float> columnMap;
     HashMap<String, Float> rowMap;
+    HashMap<Rectangle, PlayStateOptions> levelMap;
     Preferences prefs;
-
+    Rectangle rect;
+    PlayStateOptions level1;
 
     public LevelState(GameStateManager gsm) {
         super(gsm);
+        cam.setToOrtho(false, FlappyDefense.WIDTH, FlappyDefense.HEIGHT);
         prefs = Gdx.app.getPreferences("myPrefs");
         background = new Texture("bg.png");
         fontNumbers = new BitmapFont(Gdx.files.internal("fonts/shadow-white-blue-50.fnt"));
@@ -47,20 +52,39 @@ public class LevelState extends State {
         rowMap.put("row1", (float)menu.getHeight() - lockedBtn.getHeight() - 120);
         rowMap.put("row2", (float)menu.getHeight() - lockedBtn.getHeight() - 220);
         rowMap.put("row3", (float)menu.getHeight() - lockedBtn.getHeight() - 320);
+
+        level1 = new PlayStateOptions(3);
+        level1.put(0, PlayStateOptions.Bird.SlowBird, 10);
+        level1.put(1, PlayStateOptions.Bird.FastBird, 10);
+        level1.put(2, PlayStateOptions.Bird.Bird, 10);
+
+        rect = new Rectangle(columnMap.get("column1"),rowMap.get("row1"),100,100);
     }
 
     @Override
     protected void handleInput() {
+        if(touched(rect)){
+            gsm.set(new PlayState(gsm, level1));
+        }
+    }
 
+    public boolean touched(Rectangle rect) {
+        Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+        cam.unproject(touchPos);
+        if (rect.contains(touchPos.x, touchPos.y))
+            return true;
+        else
+            return false;
     }
 
     @Override
     public void update(float dt) {
-
+        handleInput();
     }
 
     @Override
     public void render(SpriteBatch sb) {
+        sb.setProjectionMatrix(cam.combined);
         sb.begin();
         sb.draw(background, 0, 0);
         sb.draw(background, background.getWidth(), 0);
@@ -68,9 +92,6 @@ public class LevelState extends State {
         sb.draw(menu, FlappyDefense.WIDTH / 2 - menu.getWidth() / 2, 0);
         drawFont(fontLetter, sb, "выберите уровень", FlappyDefense.WIDTH / 2 - 50, FlappyDefense.HEIGHT - 80);
 
-//        float width = setFontWidth("I");
-//        float height = setFontHeight("I");
-//        font.draw(sb,"I",column1 + unlockedBtn.getWidth()/2 - width/2,row1 + unlockedBtn.getHeight()/2 + height/2);
         int levelID = 0;
         for(int rowID = 1; rowID <= 3; rowID++){
             for(int columnID = 1; columnID <= 5; columnID++){
@@ -81,29 +102,9 @@ public class LevelState extends State {
                 }else{
                     sb.draw(lockedBtn, columnMap.get("column" + columnID), rowMap.get("row" + rowID));
                 }
-
             }
         }
-//        sb.draw(unlockedBtn, columnMap.get("column1"), row1);
-//        drawFont(fontNumbers, sb,"1",columnMap.get("column1"),row1);
-//        sb.draw(unlockedBtn, columnMap.get("column2"), row1);
-//        drawFont(fontNumbers, sb, "2", columnMap.get("column2"), row1);
-//        sb.draw(unlockedBtn, columnMap.get("column3"), row1);
-//        drawFont(fontNumbers, sb, "3", columnMap.get("column3"), row1);
-//        sb.draw(unlockedBtn, columnMap.get("column4"), row1);
-//        drawFont(fontNumbers, sb, "4", columnMap.get("column4"), row1);
-//        sb.draw(unlockedBtn, columnMap.get("column5"), row1);
-//        drawFont(fontNumbers, sb, "5", columnMap.get("column5"), row1);
-//        sb.draw(lockedBtn, column1, row2);
-//        sb.draw(lockedBtn, column2, row2);
-//        sb.draw(lockedBtn, column3, row2);
-//        sb.draw(lockedBtn, column4, row2);
-//        sb.draw(lockedBtn, column5, row2);
-//        sb.draw(lockedBtn, column1, row3);
-//        sb.draw(lockedBtn, column2, row3);
-//        sb.draw(lockedBtn, column3, row3);
-//        sb.draw(lockedBtn, column4, row3);
-//        sb.draw(lockedBtn, column5, row3);
+
         sb.end();
     }
 

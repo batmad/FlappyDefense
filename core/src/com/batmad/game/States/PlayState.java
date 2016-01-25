@@ -44,6 +44,7 @@ public class PlayState extends State{
     private static final int TUBE_COUNT = 4;
     private static  int groundHeight;
 
+    private PlayStateOptions options;
     private int lifes = 20;
     private int birdCount = 15;
     private int birdDead = 0;
@@ -81,8 +82,9 @@ public class PlayState extends State{
     Bird target;
     boolean hasTarget;
 
-    public PlayState(GameStateManager gsm) {
+    public PlayState(GameStateManager gsm, PlayStateOptions options) {
         super(gsm);
+        this.options = options;
         cam.setToOrtho(false, FlappyDefense.WIDTH, FlappyDefense.HEIGHT);
 
         background = new Texture("bg.png");
@@ -152,17 +154,46 @@ public class PlayState extends State{
     }
 
     private void birdCreate(){
-        for(int i = 1; i <= birdCount; i++) {
-            if(i % 3 == 0){
-                birds.add(new FastBird(i * 3 * 20));
-            }
-            else if(i % 4 == 0){
-                birds.add(new SlowBird(i * 20));
-            }else if(i % 5 ==0){
-                birds.add(new SprintBird(i * 3 * 20));
-            }
-            else {
-                birds.add(new Bird(i * 3 * 20));
+//        for(int i = 1; i <= birdCount; i++) {
+//            if(i % 3 == 0){
+//                birds.add(new FastBird(i * 3 * 20));
+//            }
+//            else if(i % 4 == 0){
+//                birds.add(new SlowBird(i * 20));
+//            }else if(i % 5 ==0){
+//                birds.add(new SprintBird(i * 3 * 20));
+//            }
+//            else {
+//                birds.add(new Bird(i * 3 * 20));
+//            }
+//        }
+        int i = 0;
+        for(PlayStateOptions.Wave wave: options.waves){
+            switch(wave.getBirdType()){
+                case Bird:
+                    for (int j=0; j < wave.getNumberOfBirds(); j++) {
+                        i++;
+                        birds.add(new Bird(i * 3 * 20));
+                    }
+                    break;
+                case SprintBird:
+                    for (int j=0; j < wave.getNumberOfBirds(); j++) {
+                        i++;
+                        birds.add(new SprintBird(i * 3 * 20));
+                    }
+                    break;
+                case SlowBird:
+                    for (int j=0; j < wave.getNumberOfBirds(); j++) {
+                        i++;
+                        birds.add(new SlowBird(i * 3 * 20));
+                    }
+                    break;
+                case FastBird:
+                    for (int j=0; j < wave.getNumberOfBirds(); j++) {
+                        i++;
+                        birds.add(new FastBird(i * 3 * 20));
+                    }
+                    break;
             }
         }
         target = birds.get(0);
