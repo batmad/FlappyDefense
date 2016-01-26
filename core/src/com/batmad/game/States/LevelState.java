@@ -54,7 +54,10 @@ public class LevelState extends State {
         rowMap.put("row3", (float)menu.getHeight() - lockedBtn.getHeight() - 320);
 
         level1 = new PlayStateOptions(3);
-        level1.put(0, PlayStateOptions.Bird.SlowBird, 10);
+        level1.put(0, PlayStateOptions.Bird.SlowBird, 1);
+        level1.put(0, PlayStateOptions.Bird.Bird, 1);
+        level1.put(0, PlayStateOptions.Bird.FastBird, 1);
+        level1.put(0, PlayStateOptions.Bird.SprintBird, 1);
         level1.put(1, PlayStateOptions.Bird.FastBird, 10);
         level1.put(2, PlayStateOptions.Bird.Bird, 10);
 

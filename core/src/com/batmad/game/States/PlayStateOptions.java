@@ -7,12 +7,11 @@ import java.util.HashMap;
 public class PlayStateOptions  {
     public Wave[] waves;
 
-    public static void main(String[] args) {
-        PlayStateOptions options = new PlayStateOptions(3);
-    }
-
     PlayStateOptions(int wavesCount){
         waves = new Wave[wavesCount];
+        for(int i=0; i < wavesCount; i++){
+            waves[i] = new Wave();
+        }
     }
 
     public enum Bird {
@@ -23,35 +22,26 @@ public class PlayStateOptions  {
     }
 
     class Wave{
-        Bird birdType;
-        int numberOfBirds;
+        HashMap<Bird, Integer> mapOfBirds;
 
-        public Wave(Bird birdType, int numberOfBirds){
-            this.birdType = birdType;
-            this.numberOfBirds = numberOfBirds;
+        public Wave(){
+            mapOfBirds = new HashMap<Bird, Integer>();
         }
 
-        public Bird getBirdType(){
-            return birdType;
+        public void put(Bird birdType, int numberOfBirds){
+            mapOfBirds.put(birdType, numberOfBirds);
         }
 
-        public int getNumberOfBirds() {
-            return numberOfBirds;
+        public HashMap<Bird, Integer> getMapOfBirds(){
+            return mapOfBirds;
         }
-
     }
 
     public void put(int waveID, Bird birdType, int birdCount){
-        waves[waveID] = new Wave(birdType, birdCount);
+        //waves[waveID] = new Wave(birdType, birdCount);
+        waves[waveID].put(birdType, birdCount);
     }
 
-    public Bird getBirdType(int waveID){
-        return waves[waveID].getBirdType();
-    }
-
-    public int getNumberOfBirds(int waveID){
-        return waves[waveID].getNumberOfBirds();
-    }
 
 
 }

@@ -169,31 +169,35 @@ public class PlayState extends State{
 //        }
         int i = 0;
         for(PlayStateOptions.Wave wave: options.waves){
-            switch(wave.getBirdType()){
-                case Bird:
-                    for (int j=0; j < wave.getNumberOfBirds(); j++) {
-                        i++;
-                        birds.add(new Bird(i * 3 * 20));
-                    }
-                    break;
-                case SprintBird:
-                    for (int j=0; j < wave.getNumberOfBirds(); j++) {
-                        i++;
-                        birds.add(new SprintBird(i * 3 * 20));
-                    }
-                    break;
-                case SlowBird:
-                    for (int j=0; j < wave.getNumberOfBirds(); j++) {
-                        i++;
-                        birds.add(new SlowBird(i * 3 * 20));
-                    }
-                    break;
-                case FastBird:
-                    for (int j=0; j < wave.getNumberOfBirds(); j++) {
-                        i++;
-                        birds.add(new FastBird(i * 3 * 20));
-                    }
-                    break;
+            for(Map.Entry<PlayStateOptions.Bird, Integer> entry : wave.getMapOfBirds().entrySet()) {
+                PlayStateOptions.Bird birdType = entry.getKey();
+                int numberOfBirds = entry.getValue();
+                switch (birdType) {
+                    case Bird:
+                        for (int j = 0; j < numberOfBirds; j++) {
+                            i++;
+                            birds.add(new Bird(i * 3 * 20));
+                        }
+                        break;
+                    case SprintBird:
+                        for (int j = 0; j < numberOfBirds; j++) {
+                            i++;
+                            birds.add(new SprintBird(i * 3 * 20));
+                        }
+                        break;
+                    case SlowBird:
+                        for (int j = 0; j < numberOfBirds; j++) {
+                            i++;
+                            birds.add(new SlowBird(i * 3 * 20));
+                        }
+                        break;
+                    case FastBird:
+                        for (int j = 0; j < numberOfBirds; j++) {
+                            i++;
+                            birds.add(new FastBird(i * 3 * 20));
+                        }
+                        break;
+                }
             }
         }
         target = birds.get(0);
