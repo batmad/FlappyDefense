@@ -58,8 +58,8 @@ public class LevelState extends State {
         level1.put(0, PlayStateOptions.Bird.Bird, 1);
         level1.put(0, PlayStateOptions.Bird.FastBird, 1);
         level1.put(0, PlayStateOptions.Bird.SprintBird, 1);
-        level1.put(1, PlayStateOptions.Bird.FastBird, 10);
-        level1.put(2, PlayStateOptions.Bird.Bird, 10);
+        level1.put(1, PlayStateOptions.Bird.FastBird, 5);
+        level1.put(2, PlayStateOptions.Bird.Bird, 4);
 
         rect = new Rectangle(columnMap.get("column1"),rowMap.get("row1"),100,100);
     }

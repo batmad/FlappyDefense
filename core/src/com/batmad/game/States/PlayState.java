@@ -46,11 +46,13 @@ public class PlayState extends State{
 
     private PlayStateOptions options;
     private int lifes = 20;
-    private int birdCount = 15;
+    private int birdCount;
     private int birdDead = 0;
     private int money = 350;
     private int testTouchLeftBot, testTouchRightBot, testTouchLeftTop, testTouchRightTop = 0;
     private int idOfTube;
+    private int numberOfWaves;
+    private int currentWave;
 
     private boolean isTouched = false;
 
@@ -84,7 +86,12 @@ public class PlayState extends State{
 
     public PlayState(GameStateManager gsm, PlayStateOptions options) {
         super(gsm);
+
+        this.currentWave = 0;
         this.options = options;
+        this.numberOfWaves = options.waves.length;
+        birdCount = options.waves[currentWave].numberOfBirds();
+
         cam.setToOrtho(false, FlappyDefense.WIDTH, FlappyDefense.HEIGHT);
 
         background = new Texture("bg.png");
@@ -134,7 +141,7 @@ public class PlayState extends State{
         //if(Gdx.input.justTouched()){
             //bird.jump();
         //}
-        if(touched(startWaveBounds) && !isTouched){
+        if(touched(startWaveBounds) && !isTouched && currentWave < numberOfWaves){
             birdCreate();
             isTouched = true;
             //for(Tube tube:tubes){
@@ -168,36 +175,35 @@ public class PlayState extends State{
 //            }
 //        }
         int i = 0;
-        for(PlayStateOptions.Wave wave: options.waves){
-            for(Map.Entry<PlayStateOptions.Bird, Integer> entry : wave.getMapOfBirds().entrySet()) {
-                PlayStateOptions.Bird birdType = entry.getKey();
-                int numberOfBirds = entry.getValue();
-                switch (birdType) {
-                    case Bird:
-                        for (int j = 0; j < numberOfBirds; j++) {
-                            i++;
-                            birds.add(new Bird(i * 3 * 20));
-                        }
-                        break;
-                    case SprintBird:
-                        for (int j = 0; j < numberOfBirds; j++) {
-                            i++;
-                            birds.add(new SprintBird(i * 3 * 20));
-                        }
-                        break;
-                    case SlowBird:
-                        for (int j = 0; j < numberOfBirds; j++) {
-                            i++;
-                            birds.add(new SlowBird(i * 3 * 20));
-                        }
-                        break;
-                    case FastBird:
-                        for (int j = 0; j < numberOfBirds; j++) {
-                            i++;
-                            birds.add(new FastBird(i * 3 * 20));
-                        }
-                        break;
-                }
+        PlayStateOptions.Wave wave = options.waves[currentWave];
+        for (Map.Entry<PlayStateOptions.Bird, Integer> entry : wave.getMapOfBirds().entrySet()) {
+            PlayStateOptions.Bird birdType = entry.getKey();
+            int numberOfBirds = entry.getValue();
+            switch (birdType) {
+                case Bird:
+                    for (int j = 0; j < numberOfBirds; j++) {
+                        i++;
+                        birds.add(new Bird(i * 3 * 20));
+                    }
+                    break;
+                case SprintBird:
+                    for (int j = 0; j < numberOfBirds; j++) {
+                        i++;
+                        birds.add(new SprintBird(i * 3 * 20));
+                    }
+                    break;
+                case SlowBird:
+                    for (int j = 0; j < numberOfBirds; j++) {
+                        i++;
+                        birds.add(new SlowBird(i * 3 * 20));
+                    }
+                    break;
+                case FastBird:
+                    for (int j = 0; j < numberOfBirds; j++) {
+                        i++;
+                        birds.add(new FastBird(i * 3 * 20));
+                    }
+                    break;
             }
         }
         target = birds.get(0);
@@ -308,8 +314,11 @@ public class PlayState extends State{
 
         if(birdDead == birdCount){
             isTouched = false;
-
-            birdCount += 5;
+            currentWave++;
+            if(currentWave < numberOfWaves) {
+                birdCount = options.waves[currentWave].numberOfBirds();
+            }
+            //birdCount += 5;
             birds = new ArrayList<Bird>();
             for(Map.Entry<Integer,Fire> entry: fires.entrySet()){
                 Integer key = entry.getKey();
