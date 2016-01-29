@@ -25,8 +25,9 @@ public class FlappyDefense extends ApplicationAdapter {
 	@Override
 	public void create () {
 		Preferences prefs = Gdx.app.getPreferences("myPrefs");
-		prefs.putInteger("levels",3);
-		prefs.flush();
+		//prefs.putInteger("levels",3);
+		//prefs.flush();
+		//prefs.remove("levels");
 		batch = new SpriteBatch();
 		gsm = new GameStateManager();
 //		music = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));

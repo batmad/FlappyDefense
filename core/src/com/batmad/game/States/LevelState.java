@@ -16,6 +16,7 @@ import java.util.HashMap;
  * Created by tm on 23.01.2016.
  */
 public class LevelState extends State {
+    private final int NUMBER_OF_LEVELS = 15;
     Texture background;
     Texture menu;
     Texture lockedBtn;
@@ -27,8 +28,11 @@ public class LevelState extends State {
     HashMap<String, Float> rowMap;
     HashMap<Rectangle, PlayStateOptions> levelMap;
     Preferences prefs;
-    Rectangle rect;
+    Rectangle[] rectangles;
+    Rectangle rect1;
+    Rectangle rect2;
     PlayStateOptions level1;
+    PlayStateOptions level2;
 
     public LevelState(GameStateManager gsm) {
         super(gsm);
@@ -54,20 +58,39 @@ public class LevelState extends State {
         rowMap.put("row3", (float)menu.getHeight() - lockedBtn.getHeight() - 320);
 
         level1 = new PlayStateOptions(3);
-        level1.put(0, PlayStateOptions.Bird.SlowBird, 1);
+        level1.put(0, PlayStateOptions.Bird.SlowBird, 2);
         level1.put(0, PlayStateOptions.Bird.Bird, 1);
         level1.put(0, PlayStateOptions.Bird.FastBird, 1);
         level1.put(0, PlayStateOptions.Bird.SprintBird, 1);
         level1.put(1, PlayStateOptions.Bird.FastBird, 5);
         level1.put(2, PlayStateOptions.Bird.Bird, 4);
 
-        rect = new Rectangle(columnMap.get("column1"),rowMap.get("row1"),100,100);
+        level2 = new PlayStateOptions(4);
+        level2.put(0, PlayStateOptions.Bird.Bird, 10);
+        level2.put(1, PlayStateOptions.Bird.SlowBird, 10);
+        level2.put(2, PlayStateOptions.Bird.FastBird, 10);
+        level2.put(3, PlayStateOptions.Bird.SprintBird, 10);
+
+        int levelID = 0;
+        rectangles = new Rectangle[NUMBER_OF_LEVELS];
+        for (int rowID = 1; rowID <= 3; rowID++) {
+            for (int columnID = 1; columnID <= 5; columnID++) {
+                rectangles[levelID] = new Rectangle(columnMap.get("column" + columnID),rowMap.get("row" + rowID),90,90);
+                levelID++;
+            }
+        }
+        rect1 = new Rectangle(columnMap.get("column1"),rowMap.get("row1"),90,90);
+        rect2 = new Rectangle(columnMap.get("column2"),rowMap.get("row1"),90,90);
+        
     }
 
     @Override
     protected void handleInput() {
-        if(touched(rect)){
+        if(touched(rect1)){
             gsm.set(new PlayState(gsm, level1));
+        }
+        else if(touched(rect2)){
+            gsm.set(new PlayState(gsm, level2));
         }
     }
 

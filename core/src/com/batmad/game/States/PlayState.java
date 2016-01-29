@@ -65,8 +65,7 @@ public class PlayState extends State{
     private Vector2 groundPos1, groundPos2;
     private Rectangle startWaveBounds;
     private Animation buttonClicked, buttonClickedReverse;
-    private ParticleEffect fire;
-    private ParticleEmitter emitter;
+
 
     private float btnAnimTime;
 
@@ -74,7 +73,7 @@ public class PlayState extends State{
     private ArrayList<Bird> birds;
     private ArrayList<Bullet> bullets;
     private HashMap<Integer, Fire> fires;
-    private Iterator<Bird> birdIterator;
+
 
     private BitmapFont font, shortFont;
 
@@ -121,13 +120,9 @@ public class PlayState extends State{
         bullets = new ArrayList<Bullet>();
         fires = new HashMap<Integer, Fire>();
 
-        birdIterator = birds.iterator();
 
         font = new BitmapFont(Gdx.files.internal("fonts/flappybird-32.fnt"));
         shortFont = new BitmapFont(Gdx.files.internal("fonts/flappybird-12.fnt"));
-
-        fire = new ParticleEffect();
-        fire.load(Gdx.files.internal("fireFD"), Gdx.files.internal(""));
 
 
         for(int i = 1; i <= TUBE_COUNT; i++){
@@ -306,7 +301,16 @@ public class PlayState extends State{
                             //fire.setIsFired(true);
                         }
                     }
-
+                }
+                idOfTube++;
+            }
+        }else{
+            int idOfTube = 0;
+            for (Tube tube : tubes) {
+                if (tube.getClass().getName().equals("com.batmad.game.Sprites.FireTube")) {
+                    Fire fire = fires.get(idOfTube);
+                    System.out.println("fire invisible");
+                    fire.stop(dt);
                 }
                 idOfTube++;
             }
@@ -319,13 +323,14 @@ public class PlayState extends State{
                 birdCount = options.waves[currentWave].numberOfBirds();
             }
             //birdCount += 5;
-            birds = new ArrayList<Bird>();
             for(Map.Entry<Integer,Fire> entry: fires.entrySet()){
                 Integer key = entry.getKey();
                 Fire fire = entry.getValue();
+                fire.stop(dt);
                 //fire.setIsFired(false);
 
             }
+            birds = new ArrayList<Bird>();
             //emitter.duration = 0;
             //emitter.durationTimer = 0;
         }
@@ -366,8 +371,8 @@ public class PlayState extends State{
                     testTouchLeftBot++;
                     Tube upgradeTube = new FireTube(tubes.get(idOfTube).getPosTopTube().x);
                     Fire fire = new Fire(upgradeTube.getPosBotTube().x + upgradeTube.getBottomTube().getWidth()/2, upgradeTube.getPosBotTube().y + upgradeTube.getBottomTube().getHeight(), upgradeTube.getDamage());
-                    fires.put(idOfTube, fire);
                     if (money > upgradeTube.getValue()) {
+                        fires.put(idOfTube, fire);
                         tubes.set(idOfTube, upgradeTube);
                         money -= tubes.get(idOfTube).getValue();
                     }
@@ -377,8 +382,8 @@ public class PlayState extends State{
                     testTouchRightBot++;
                     Tube upgradeTube = new FireTube(tubes.get(idOfTube).getPosTopTube().x);
                     Fire fire = new Fire(upgradeTube.getPosBotTube().x + upgradeTube.getBottomTube().getWidth()/2, upgradeTube.getPosBotTube().y + upgradeTube.getBottomTube().getHeight(), upgradeTube.getDamage());
-                    fires.put(idOfTube, fire);
                     if (money > upgradeTube.getValue()) {
+                        fires.put(idOfTube, fire);
                         tubes.set(idOfTube, upgradeTube);
                         money -= tubes.get(idOfTube).getValue();
                     }
@@ -386,12 +391,7 @@ public class PlayState extends State{
                 }
             }
        // }
-        fire.setPosition(10, 40);
-        fire.update(dt);
-        emitter = fire.getEmitters().first();
-        emitter.getScale().setHigh(5, 20);
-        emitter.getAngle().setHigh(90);
-        emitter.getAngle().setLow(90);
+
         cam.update();
     }
 
@@ -474,12 +474,12 @@ public class PlayState extends State{
         for(Map.Entry<Integer,Fire> entry: fires.entrySet()){
             Integer key = entry.getKey();
             Fire fire = entry.getValue();
-            if(!fire.isFired()) {
+
                 fire.getFire().draw(sb);
-            }
+
         }
 
-        fire.draw(sb);
+
         font.draw(sb, "" + ((int)lifes), 750,40);
         font.draw(sb, "" + ((int)money), 650,40);
         font.draw(sb, "BD:" + ((int)birdDead), 400,40);
