@@ -23,8 +23,10 @@ public class Bird {
     private Rectangle bounds;
     private Animation birdAnimation;
     protected Texture texture = new Texture("bird/birdanimation.png");;
+    protected Texture lifeTexture = new Texture("bird/life.png");;
     private Sound flap;
     protected int birdLifes = 15;
+    protected int birdLifesMax = 15;
     protected int gold = 20;
     private boolean isOverEdge, isDead, isTarget = false;
 
@@ -75,6 +77,14 @@ public class Bird {
         return birdAnimation.getFrame();
     }
 
+    public Texture getLifeTexture(){
+        return lifeTexture;
+    }
+
+    public int getLifePercentage(){
+        return lifeTexture.getWidth() * getLifes() / birdLifesMax;
+    }
+
     public boolean isOverEdge() {
         return isOverEdge;
     }
@@ -108,7 +118,7 @@ public class Bird {
         birdLifes -= damage;
     }
 
-    public int getBirdLifes() {
+    public int getLifes() {
         return birdLifes;
     }
 

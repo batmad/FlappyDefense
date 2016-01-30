@@ -10,12 +10,14 @@ public class SprintBird extends Bird {
     private int MIN_HEIGHT = 270;
     private int sprintMovement = 150;
     protected int birdLifes = 20;
+    protected int birdLifesMax = 20;
     protected int gold = 40;
 
     public SprintBird(int x){
         super(x, texture);
         super.birdLifes = birdLifes;
         super.gold = gold;
+        super.birdLifesMax = birdLifesMax;
     }
 
     @Override

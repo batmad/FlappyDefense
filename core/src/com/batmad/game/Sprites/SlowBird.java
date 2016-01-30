@@ -10,6 +10,7 @@ public class SlowBird extends Bird {
     private int MIN_HEIGHT = 225;
     private int MOVEMENT = 50;
     private int birdLifes = 30;
+    private int birdLifesMax = 30;
     private int gold = 40;
     private boolean isOverEdge, isDead, isTarget = false;
 
@@ -18,6 +19,7 @@ public class SlowBird extends Bird {
         super.MOVEMENT = MOVEMENT;
         super.birdLifes = birdLifes;
         super.gold = gold;
+        super.birdLifesMax = birdLifesMax;
     }
 
 

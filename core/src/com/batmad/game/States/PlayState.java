@@ -1,24 +1,16 @@
 package com.batmad.game.States;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.ParticleEffect;
-import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 //import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Array;
 import com.batmad.game.FlappyDefense;
 import com.batmad.game.Sprites.ArrowTube;
 import com.batmad.game.Sprites.Bird;
@@ -33,7 +25,6 @@ import com.batmad.game.Sprites.TubeGrowed;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -61,6 +52,7 @@ public class PlayState extends State{
     private Texture towerUpgradeMenu;
     private Texture cannonBullet;
     private Texture arrowBullet;
+    private Texture fireBullet;
     private Texture startWaveBtn;
     private Vector2 groundPos1, groundPos2;
     private Rectangle startWaveBounds;
@@ -98,6 +90,7 @@ public class PlayState extends State{
         towerUpgradeMenu = new Texture("towerupgrademenu.png");
         cannonBullet = new Texture("ball.png");
         arrowBullet = new Texture("arrow.png");
+        fireBullet = new Texture("fire.png");
         startWaveBtn = new Texture("playbtn.png");
         startWaveBounds = new Rectangle(10,FlappyDefense.HEIGHT/2,startWaveBtn.getWidth(),startWaveBtn.getHeight());
 
@@ -259,7 +252,7 @@ public class PlayState extends State{
                         }
                     }
                 }
-                if (bird.getBirdLifes() <= 0) {
+                if (bird.getLifes() <= 0) {
                     money += bird.getGold();
                     //bird.dispose();
                     bird.setIsDead(true);
@@ -295,7 +288,7 @@ public class PlayState extends State{
                         //else if(birds.get(birdCount-1).getPosition().x > tube.getPosBotTube().x + tube.getBottomTube().getWidth()){
                         else{
                             Fire fire = fires.get(idOfTube);
-                            System.out.println("fire invisible");
+                            //System.out.println("fire invisible");
                             fire.stop(dt);
                             //fire.update(dt);
                             //fire.setIsFired(true);
@@ -309,7 +302,7 @@ public class PlayState extends State{
             for (Tube tube : tubes) {
                 if (tube.getClass().getName().equals("com.batmad.game.Sprites.FireTube")) {
                     Fire fire = fires.get(idOfTube);
-                    System.out.println("fire invisible");
+                    //System.out.println("fire invisible");
                     fire.stop(dt);
                 }
                 idOfTube++;
@@ -415,6 +408,11 @@ public class PlayState extends State{
         for(Bird bird: birds) {
             if(!bird.isDead()) {
                 sb.draw(bird.getTexture(), bird.getPosition().x, bird.getPosition().y);
+
+                sb.setColor(Color.RED);
+                sb.draw(bird.getLifeTexture(), bird.getPosition().x, bird.getPosition().y - 5);
+                sb.setColor(Color.WHITE);
+                sb.draw(bird.getLifeTexture(), bird.getPosition().x, bird.getPosition().y - 5, 0, 0, bird.getLifePercentage(), 2);
             }
         }
         for(Tube tube: tubes) {
@@ -432,6 +430,7 @@ public class PlayState extends State{
                     //sb.draw(tube.getBottomTubeGrowed(), tube.getPosBottomTubeGrowed().x, tube.getPosBottomTubeGrowed().y);
                     int costCannon = new TubeGrowed(0).getValue();
                     int costArrow = new ArrowTube(0).getValue();
+                    int costFire = new FireTube(0).getValue();
                     makeMenuBounds(tube.getPosBotTube().x - tube.getBottomTube().getWidth() / 2, groundHeight, tubes.indexOf(tube));
                     sb.draw(towerUpgradeMenu, tube.getPosBotTube().x - tube.getBottomTube().getWidth() / 2, groundHeight);
                     if (money < costCannon) {
@@ -451,6 +450,15 @@ public class PlayState extends State{
                     } else {
                         sb.draw(arrowBullet, tube.getPosBotTube().x - tube.getBottomTube().getWidth() / 2 + towerUpgradeMenu.getWidth() * 3 / 4 - arrowBullet.getWidth() / 2, groundHeight + towerUpgradeMenu.getHeight() * 3 / 4 - arrowBullet.getHeight() / 2);
                         shortFont.draw(sb, "" + ((int) costArrow), tube.getPosBotTube().x - tube.getBottomTube().getWidth() / 2 + towerUpgradeMenu.getWidth() * 3 / 4 - cannonBullet.getWidth() / 2, groundHeight + towerUpgradeMenu.getHeight() * 3 / 4 - cannonBullet.getHeight() / 2);
+                    }
+                    if (money < costFire) {
+                        Color c = sb.getColor();
+                        sb.setColor(0, 0, 0, 0.5f);
+                        sb.draw(fireBullet, tube.getPosBotTube().x - tube.getBottomTube().getWidth() / 2 + towerUpgradeMenu.getWidth() / 4 - arrowBullet.getWidth() / 2, groundHeight + towerUpgradeMenu.getHeight() / 4 - arrowBullet.getHeight() / 2);
+                        sb.setColor(c.r, c.g, c.b, 1f);
+                    } else {
+                        sb.draw(fireBullet, tube.getPosBotTube().x - tube.getBottomTube().getWidth() / 2 + towerUpgradeMenu.getWidth() / 4 - arrowBullet.getWidth() / 2, groundHeight + towerUpgradeMenu.getHeight() / 4 - arrowBullet.getHeight() / 2);
+                        shortFont.draw(sb, "" + ((int) costFire), tube.getPosBotTube().x - tube.getBottomTube().getWidth() / 2 + towerUpgradeMenu.getWidth() / 4 - cannonBullet.getWidth() / 2, groundHeight + towerUpgradeMenu.getHeight() / 4 - cannonBullet.getHeight() / 2);
                     }
                 }
                 else{
