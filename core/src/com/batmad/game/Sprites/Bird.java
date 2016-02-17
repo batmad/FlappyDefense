@@ -35,7 +35,7 @@ public class Bird {
         position = new Vector3(x,y,0);
         velocity = new Vector3(0,0,0);
         birdAnimation = new Animation(new TextureRegion(texture), 3, 0.5f);
-        bounds = new Rectangle(x, y, texture.getWidth()/3, texture.getHeight()/3);
+        bounds = new Rectangle(x, y, texture.getWidth()/3, texture.getHeight());
         flap = Gdx.audio.newSound(Gdx.files.internal("sfx_wing.ogg"));
         isOverEdge = false;
     }

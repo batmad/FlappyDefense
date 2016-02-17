@@ -53,7 +53,7 @@ public class Fire {
 
     public void update(float dt){
         fire.update(dt);
-        velocity.add(target.getX() + target.getWidth(), target.getY());
+        velocity.add(target.getX() + target.getWidth()/2, target.getY());
         velocity.sub(x,y);
         velocity.scl(dt);
         emitter.getAngle().setHigh(angle());

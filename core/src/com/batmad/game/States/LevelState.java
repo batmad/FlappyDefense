@@ -11,12 +11,14 @@ import com.badlogic.gdx.math.Vector3;
 import com.batmad.game.FlappyDefense;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Created by tm on 23.01.2016.
  */
 public class LevelState extends State {
-    private final int NUMBER_OF_LEVELS = 15;
+    public final int NUMBER_OF_LEVELS = Levels.NUMBER_OF_LEVELS;
     Texture background;
     Texture menu;
     Texture lockedBtn;
@@ -26,13 +28,13 @@ public class LevelState extends State {
     float column1, column2, column3, column4, column5;
     HashMap<String, Float> columnMap;
     HashMap<String, Float> rowMap;
-    HashMap<Rectangle, PlayStateOptions> levelMap;
+    LinkedHashMap<Rectangle, PlayStateOptions> levelMap;
     Preferences prefs;
     Rectangle[] rectangles;
     Rectangle rect1;
     Rectangle rect2;
-    PlayStateOptions level1;
-    PlayStateOptions level2;
+    public PlayStateOptions[] levels;
+
 
     public LevelState(GameStateManager gsm) {
         super(gsm);
@@ -46,51 +48,50 @@ public class LevelState extends State {
         unlockedBtn = new Texture("menu/unblockedlevelbtn.png");
 
         columnMap = new HashMap<String, Float>(5);
-        columnMap.put("column1", (float)FlappyDefense.WIDTH/2 - menu.getWidth()/2 + 40);
-        columnMap.put("column2", (float)FlappyDefense.WIDTH/2 - menu.getWidth()/2 + 143);
-        columnMap.put("column3", (float)FlappyDefense.WIDTH/2 - menu.getWidth()/2 + 246);
-        columnMap.put("column4", (float)FlappyDefense.WIDTH/2 - menu.getWidth()/2 + 349);
-        columnMap.put("column5", (float)FlappyDefense.WIDTH/2 - menu.getWidth()/2 + 452);
+        columnMap.put("column1", (float) FlappyDefense.WIDTH / 2 - menu.getWidth() / 2 + 40);
+        columnMap.put("column2", (float) FlappyDefense.WIDTH / 2 - menu.getWidth() / 2 + 143);
+        columnMap.put("column3", (float) FlappyDefense.WIDTH / 2 - menu.getWidth() / 2 + 246);
+        columnMap.put("column4", (float) FlappyDefense.WIDTH / 2 - menu.getWidth() / 2 + 349);
+        columnMap.put("column5", (float) FlappyDefense.WIDTH / 2 - menu.getWidth() / 2 + 452);
 
         rowMap = new HashMap<String, Float>(3);
-        rowMap.put("row1", (float)menu.getHeight() - lockedBtn.getHeight() - 120);
-        rowMap.put("row2", (float)menu.getHeight() - lockedBtn.getHeight() - 220);
-        rowMap.put("row3", (float)menu.getHeight() - lockedBtn.getHeight() - 320);
+        rowMap.put("row1", (float) menu.getHeight() - lockedBtn.getHeight() - 120);
+        rowMap.put("row2", (float) menu.getHeight() - lockedBtn.getHeight() - 220);
+        rowMap.put("row3", (float) menu.getHeight() - lockedBtn.getHeight() - 320);
 
-        level1 = new PlayStateOptions(3);
-        level1.put(0, PlayStateOptions.Bird.SlowBird, 2);
-        level1.put(0, PlayStateOptions.Bird.Bird, 1);
-        level1.put(0, PlayStateOptions.Bird.FastBird, 1);
-        level1.put(0, PlayStateOptions.Bird.SprintBird, 1);
-        level1.put(1, PlayStateOptions.Bird.FastBird, 5);
-        level1.put(2, PlayStateOptions.Bird.Bird, 4);
+        levels = new Levels().getLevels();
 
-        level2 = new PlayStateOptions(4);
-        level2.put(0, PlayStateOptions.Bird.Bird, 10);
-        level2.put(1, PlayStateOptions.Bird.SlowBird, 10);
-        level2.put(2, PlayStateOptions.Bird.FastBird, 10);
-        level2.put(3, PlayStateOptions.Bird.SprintBird, 10);
+        levelMap = new LinkedHashMap<Rectangle, PlayStateOptions>();
 
         int levelID = 0;
         rectangles = new Rectangle[NUMBER_OF_LEVELS];
         for (int rowID = 1; rowID <= 3; rowID++) {
             for (int columnID = 1; columnID <= 5; columnID++) {
-                rectangles[levelID] = new Rectangle(columnMap.get("column" + columnID),rowMap.get("row" + rowID),90,90);
+                rectangles[levelID] = new Rectangle(columnMap.get("column" + columnID), rowMap.get("row" + rowID), 90, 90);
                 levelID++;
             }
         }
-        rect1 = new Rectangle(columnMap.get("column1"),rowMap.get("row1"),90,90);
-        rect2 = new Rectangle(columnMap.get("column2"),rowMap.get("row1"),90,90);
-        
+
+        for(int i=0; i < NUMBER_OF_LEVELS; i++) {
+            if (i < prefs.getInteger("levels", 1)) {
+                levelMap.put(rectangles[i],levels[i]);
+            }
+        }
+
+
+        rect1 = new Rectangle(columnMap.get("column1"), rowMap.get("row1"), 90, 90);
+        rect2 = new Rectangle(columnMap.get("column2"), rowMap.get("row1"), 90, 90);
+
     }
 
     @Override
     protected void handleInput() {
-        if(touched(rect1)){
-            gsm.set(new PlayState(gsm, level1));
-        }
-        else if(touched(rect2)){
-            gsm.set(new PlayState(gsm, level2));
+        for(Map.Entry<Rectangle, PlayStateOptions> entry: levelMap.entrySet()){
+            Rectangle rect = entry.getKey();
+            PlayStateOptions options = entry.getValue();
+            if(touched(rect) && Gdx.input.justTouched()){
+                gsm.set(new PlayState(gsm, options));
+            }
         }
     }
 
@@ -119,13 +120,13 @@ public class LevelState extends State {
         drawFont(fontLetter, sb, "выберите уровень", FlappyDefense.WIDTH / 2 - 50, FlappyDefense.HEIGHT - 80);
 
         int levelID = 0;
-        for(int rowID = 1; rowID <= 3; rowID++){
-            for(int columnID = 1; columnID <= 5; columnID++){
+        for (int rowID = 1; rowID <= 3; rowID++) {
+            for (int columnID = 1; columnID <= 5; columnID++) {
                 levelID++;
-                if(levelID <= prefs.getInteger("levels",1)){
+                if (levelID <= prefs.getInteger("levels", 1)) {
                     sb.draw(unlockedBtn, columnMap.get("column" + columnID), rowMap.get("row" + rowID));
                     drawFont(fontNumbers, sb, String.valueOf(levelID), columnMap.get("column" + columnID), rowMap.get("row" + rowID));
-                }else{
+                } else {
                     sb.draw(lockedBtn, columnMap.get("column" + columnID), rowMap.get("row" + rowID));
                 }
             }
@@ -134,7 +135,8 @@ public class LevelState extends State {
         sb.end();
     }
 
-    public void drawFont(BitmapFont font, SpriteBatch sb, String text, float column, float row){
+
+    public void drawFont(BitmapFont font, SpriteBatch sb, String text, float column, float row) {
         GlyphLayout glyphLayout = new GlyphLayout();
         glyphLayout.setText(font, text);
         font.draw(sb, text, column + unlockedBtn.getWidth() / 2 - glyphLayout.width / 2, row + unlockedBtn.getHeight() / 2 + glyphLayout.height / 2);
@@ -142,6 +144,11 @@ public class LevelState extends State {
 
     @Override
     public void dispose() {
-
+        menu.dispose();
+        lockedBtn.dispose();
+        unlockedBtn.dispose();
+        background.dispose();
+        fontNumbers.dispose();
+        fontLetter.dispose();
     }
 }

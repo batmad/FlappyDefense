@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-//import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.math.Vector3;
 import com.batmad.game.FlappyDefense;
 import com.batmad.game.Sprites.ArrowTube;
@@ -39,16 +38,22 @@ public class PlayState extends State{
     private int lifes = 20;
     private int birdCount;
     private int birdDead = 0;
+    private int birdDeadTotal;
     private int money = 350;
+    private int score;
     private int testTouchLeftBot, testTouchRightBot, testTouchLeftTop, testTouchRightTop = 0;
     private int idOfTube;
     private int numberOfWaves;
     private int currentWave;
+    private int countNextWaveStart = -1;
+    private long countNextWaveStartTimeMillis;
 
     private boolean isTouched = false;
+    private boolean wonGame = false;
 
     private Texture background;
     private Texture ground;
+    private Texture menu;
     private Texture towerUpgradeMenu;
     private Texture cannonBullet;
     private Texture arrowBullet;
@@ -87,6 +92,7 @@ public class PlayState extends State{
 
         background = new Texture("bg.png");
         ground = new Texture("ground.png");
+        menu = new Texture("menu/won.png");
         towerUpgradeMenu = new Texture("towerupgrademenu.png");
         cannonBullet = new Texture("ball.png");
         arrowBullet = new Texture("arrow.png");
@@ -129,14 +135,27 @@ public class PlayState extends State{
         //if(Gdx.input.justTouched()){
             //bird.jump();
         //}
-        if(touched(startWaveBounds) && !isTouched && currentWave < numberOfWaves){
+        if(touched(startWaveBounds) && !isTouched && currentWave < numberOfWaves && Gdx.input.justTouched()){
             birdCreate();
             isTouched = true;
+            countNextWaveStart = -1;
             //for(Tube tube:tubes){
                 //tube.grow();
             //}
         }
 
+    }
+
+    public void countNextWaveStart(){
+        if(countNextWaveStart > 0 & countNextWaveStartTimeMillis < System.currentTimeMillis() & !isTouched & currentWave < numberOfWaves){
+            countNextWaveStartTimeMillis = System.currentTimeMillis() + 1000;
+            countNextWaveStart--;
+        }
+        if(countNextWaveStart == 0){
+            birdCreate();
+            isTouched = true;
+            countNextWaveStart = -1;
+        }
     }
 
     public boolean touched(Rectangle rect) {
@@ -183,7 +202,7 @@ public class PlayState extends State{
                 case SlowBird:
                     for (int j = 0; j < numberOfBirds; j++) {
                         i++;
-                        birds.add(new SlowBird(i * 3 * 20));
+                        birds.add(new SlowBird(i * 20));
                     }
                     break;
                 case FastBird:
@@ -205,6 +224,7 @@ public class PlayState extends State{
     @Override
     public void update(float dt) {
         handleInput();
+        countNextWaveStart();
 
         btnAnimTime += dt;
         birdDead = 0;
@@ -254,8 +274,11 @@ public class PlayState extends State{
                 }
                 if (bird.getLifes() <= 0) {
                     money += bird.getGold();
+                    score += bird.getGold();
+                    score += FlappyDefense.WIDTH - bird.getPosition().x;
                     //bird.dispose();
                     bird.setIsDead(true);
+                    birdDeadTotal++;
                 }
 
             }else{
@@ -314,21 +337,18 @@ public class PlayState extends State{
             currentWave++;
             if(currentWave < numberOfWaves) {
                 birdCount = options.waves[currentWave].numberOfBirds();
+                countNextWaveStart = 15;
             }
-            //birdCount += 5;
             for(Map.Entry<Integer,Fire> entry: fires.entrySet()){
                 Integer key = entry.getKey();
                 Fire fire = entry.getValue();
                 fire.stop(dt);
-                //fire.setIsFired(false);
-
             }
             birds = new ArrayList<Bird>();
-            //emitter.duration = 0;
-            //emitter.durationTimer = 0;
         }
 
-
+        if(currentWave == numberOfWaves)
+            wonGame = true;
 
 
         for(Bullet bullet:bullets){
@@ -342,7 +362,7 @@ public class PlayState extends State{
             //if(tubes.get(i).collides(bird.getBounds()))
                 //gsm.set(new MenuState(gsm));
             if(isPopup){
-                if(Gdx.input.justTouched() && touched(rectRightTop)) {
+                if(touched(rectRightTop) && Gdx.input.justTouched()) {
                     testTouchRightTop++;
                     Tube upgradeTube = new ArrowTube(tubes.get(idOfTube).getPosTopTube().x);
                     if (money > upgradeTube.getValue()) {
@@ -351,7 +371,7 @@ public class PlayState extends State{
                     }
                     isPopup = false;
                 }
-                if(Gdx.input.justTouched() && touched(rectLeftTop)) {
+                if(touched(rectLeftTop) && Gdx.input.justTouched()) {
                     testTouchLeftTop++;
                     Tube upgradeTube = new TubeGrowed(tubes.get(idOfTube).getPosTopTube().x);
                     if (money > upgradeTube.getValue()) {
@@ -384,7 +404,9 @@ public class PlayState extends State{
                 }
             }
        // }
-
+        if(lifes < 0){
+            gameOver();
+        }
         cam.update();
     }
 
@@ -393,30 +415,31 @@ public class PlayState extends State{
         sb.setProjectionMatrix(cam.combined);
         sb.begin();
         sb.draw(background, 0, 0);
-        sb.draw(background, background.getWidth(), 0);
-        sb.draw(background, background.getWidth() * 2, 0);
-        sb.draw(ground, 0, FlappyDefense.GROUND_Y_OFFSET);
-        sb.draw(ground, ground.getWidth(), FlappyDefense.GROUND_Y_OFFSET);
-        sb.draw(ground, 2 * ground.getWidth(), FlappyDefense.GROUND_Y_OFFSET);
-        if(!isTouched) {
-            sb.draw(startWaveBtn, 10, FlappyDefense.HEIGHT / 2);
-        }
-        else{
-            sb.draw(buttonClicked.getKeyFrame(btnAnimTime),10, FlappyDefense.HEIGHT / 2);
-        }
-
-        for(Bird bird: birds) {
-            if(!bird.isDead()) {
-                sb.draw(bird.getTexture(), bird.getPosition().x, bird.getPosition().y);
-
-                sb.setColor(Color.RED);
-                sb.draw(bird.getLifeTexture(), bird.getPosition().x, bird.getPosition().y - 5);
-                sb.setColor(Color.WHITE);
-                sb.draw(bird.getLifeTexture(), bird.getPosition().x, bird.getPosition().y - 5, 0, 0, bird.getLifePercentage(), 2);
+//        sb.draw(ground, 0, FlappyDefense.GROUND_Y_OFFSET);
+//        sb.draw(ground, ground.getWidth(), FlappyDefense.GROUND_Y_OFFSET);
+//        sb.draw(ground, 2 * ground.getWidth(), FlappyDefense.GROUND_Y_OFFSET);
+        if(wonGame){
+            sb.draw(menu,cam.position.x - menu.getWidth()/2,cam.position.y - menu.getHeight()/2);
+            font.draw(sb, String.valueOf(score), cam.position.x, cam.position.y + 15);
+            font.draw(sb, String.valueOf(birdDeadTotal), cam.position.x, cam.position.y - 45);
+        }else {
+            if (!isTouched) {
+                sb.draw(startWaveBtn, 10, FlappyDefense.HEIGHT / 2);
+            } else {
+                sb.draw(buttonClicked.getKeyFrame(btnAnimTime), 10, FlappyDefense.HEIGHT / 2);
             }
-        }
-        for(Tube tube: tubes) {
-            //draw the Top Tube
+
+            for (Bird bird : birds) {
+                if (!bird.isDead()) {
+                    sb.draw(bird.getTexture(), bird.getPosition().x, bird.getPosition().y);
+                    sb.setColor(Color.RED);
+                    sb.draw(bird.getLifeTexture(), bird.getPosition().x + bird.getBounds().getWidth()/2 - bird.getLifeTexture().getWidth()/2, bird.getPosition().y - 5);
+                    sb.setColor(Color.WHITE);
+                    sb.draw(bird.getLifeTexture(), bird.getPosition().x + bird.getBounds().getWidth()/2 - bird.getLifeTexture().getWidth()/2, bird.getPosition().y - 5, 0, 0, bird.getLifePercentage(), 2);
+                }
+            }
+            for (Tube tube : tubes) {
+                //draw the Top Tube
 //            if(touched(tube.getBoundsTop())){
 //                //sb.draw(tube.getTopTubeGrowed(), tube.getPosTopTubeGrowed().x, tube.getPosTopTubeGrowed().y);
 //                makeMenuBounds(tube.getPosTopTube().x - tube.getTopTube().getWidth()/2, FlappyDefense.HEIGHT - towerUpgradeMenu.getHeight(), tubes.indexOf(tube));
@@ -425,77 +448,78 @@ public class PlayState extends State{
 //            else {
 //                sb.draw(tube.getTopTube(), tube.getPosTopTube().x, tube.getPosTopTube().y);
 //            }
-            if( touched(tube.getBoundsBot())){
-                if (tube.getClass().getName().equals("com.batmad.game.Sprites.Tube")) {
-                    //sb.draw(tube.getBottomTubeGrowed(), tube.getPosBottomTubeGrowed().x, tube.getPosBottomTubeGrowed().y);
-                    int costCannon = new TubeGrowed(0).getValue();
-                    int costArrow = new ArrowTube(0).getValue();
-                    int costFire = new FireTube(0).getValue();
-                    makeMenuBounds(tube.getPosBotTube().x - tube.getBottomTube().getWidth() / 2, groundHeight, tubes.indexOf(tube));
-                    sb.draw(towerUpgradeMenu, tube.getPosBotTube().x - tube.getBottomTube().getWidth() / 2, groundHeight);
-                    if (money < costCannon) {
-                        Color c = sb.getColor();
-                        sb.setColor(0, 0, 0, 0.5f);
-                        sb.draw(cannonBullet, tube.getPosBotTube().x - tube.getBottomTube().getWidth() / 2 + towerUpgradeMenu.getWidth() / 4 - cannonBullet.getWidth() / 2, groundHeight + towerUpgradeMenu.getHeight() * 3 / 4 - cannonBullet.getHeight() / 2);
-                        sb.setColor(c.r, c.g, c.b, 1f);
+                if (touched(tube.getBoundsBot())) {
+                    if (tube.getClass().getName().equals("com.batmad.game.Sprites.Tube")) {
+                        //sb.draw(tube.getBottomTubeGrowed(), tube.getPosBottomTubeGrowed().x, tube.getPosBottomTubeGrowed().y);
+                        int costCannon = new TubeGrowed(0).getValue();
+                        int costArrow = new ArrowTube(0).getValue();
+                        int costFire = new FireTube(0).getValue();
+                        makeMenuBounds(tube.getPosBotTube().x - tube.getBottomTube().getWidth() / 2, groundHeight, tubes.indexOf(tube));
+                        sb.draw(towerUpgradeMenu, tube.getPosBotTube().x - tube.getBottomTube().getWidth() / 2, groundHeight);
+                        if (money < costCannon) {
+                            Color c = sb.getColor();
+                            sb.setColor(0, 0, 0, 0.5f);
+                            sb.draw(cannonBullet, tube.getPosBotTube().x - tube.getBottomTube().getWidth() / 2 + towerUpgradeMenu.getWidth() / 4 - cannonBullet.getWidth() / 2, groundHeight + towerUpgradeMenu.getHeight() * 3 / 4 - cannonBullet.getHeight() / 2);
+                            sb.setColor(c.r, c.g, c.b, 1f);
+                        } else {
+                            sb.draw(cannonBullet, tube.getPosBotTube().x - tube.getBottomTube().getWidth() / 2 + towerUpgradeMenu.getWidth() / 4 - cannonBullet.getWidth() / 2, groundHeight + towerUpgradeMenu.getHeight() * 3 / 4 - cannonBullet.getHeight() / 2);
+                            shortFont.draw(sb, "" + ((int) costCannon), tube.getPosBotTube().x - tube.getBottomTube().getWidth() / 2 + towerUpgradeMenu.getWidth() / 4 - cannonBullet.getWidth() / 2, groundHeight + towerUpgradeMenu.getHeight() * 3 / 4 - cannonBullet.getHeight() / 2);
+                        }
+                        if (money < costArrow) {
+                            Color c = sb.getColor();
+                            sb.setColor(0, 0, 0, 0.5f);
+                            sb.draw(arrowBullet, tube.getPosBotTube().x - tube.getBottomTube().getWidth() / 2 + towerUpgradeMenu.getWidth() * 3 / 4 - arrowBullet.getWidth() / 2, groundHeight + towerUpgradeMenu.getHeight() * 3 / 4 - arrowBullet.getHeight() / 2);
+                            sb.setColor(c.r, c.g, c.b, 1f);
+                        } else {
+                            sb.draw(arrowBullet, tube.getPosBotTube().x - tube.getBottomTube().getWidth() / 2 + towerUpgradeMenu.getWidth() * 3 / 4 - arrowBullet.getWidth() / 2, groundHeight + towerUpgradeMenu.getHeight() * 3 / 4 - arrowBullet.getHeight() / 2);
+                            shortFont.draw(sb, "" + ((int) costArrow), tube.getPosBotTube().x - tube.getBottomTube().getWidth() / 2 + towerUpgradeMenu.getWidth() * 3 / 4 - cannonBullet.getWidth() / 2, groundHeight + towerUpgradeMenu.getHeight() * 3 / 4 - cannonBullet.getHeight() / 2);
+                        }
+                        if (money < costFire) {
+                            Color c = sb.getColor();
+                            sb.setColor(0, 0, 0, 0.5f);
+                            sb.draw(fireBullet, tube.getPosBotTube().x - tube.getBottomTube().getWidth() / 2 + towerUpgradeMenu.getWidth() / 4 - arrowBullet.getWidth() / 2, groundHeight + towerUpgradeMenu.getHeight() / 4 - arrowBullet.getHeight() / 2);
+                            sb.setColor(c.r, c.g, c.b, 1f);
+                        } else {
+                            sb.draw(fireBullet, tube.getPosBotTube().x - tube.getBottomTube().getWidth() / 2 + towerUpgradeMenu.getWidth() / 4 - arrowBullet.getWidth() / 2, groundHeight + towerUpgradeMenu.getHeight() / 4 - arrowBullet.getHeight() / 2);
+                            shortFont.draw(sb, "" + ((int) costFire), tube.getPosBotTube().x - tube.getBottomTube().getWidth() / 2 + towerUpgradeMenu.getWidth() / 4 - cannonBullet.getWidth() / 2, groundHeight + towerUpgradeMenu.getHeight() / 4 - cannonBullet.getHeight() / 2);
+                        }
                     } else {
-                        sb.draw(cannonBullet, tube.getPosBotTube().x - tube.getBottomTube().getWidth() / 2 + towerUpgradeMenu.getWidth() / 4 - cannonBullet.getWidth() / 2, groundHeight + towerUpgradeMenu.getHeight() * 3 / 4 - cannonBullet.getHeight() / 2);
-                        shortFont.draw(sb, "" + ((int) costCannon), tube.getPosBotTube().x - tube.getBottomTube().getWidth() / 2 + towerUpgradeMenu.getWidth() / 4 - cannonBullet.getWidth() / 2, groundHeight + towerUpgradeMenu.getHeight() * 3 / 4 - cannonBullet.getHeight() / 2);
+                        sb.draw(tube.getBottomTube(), tube.getPosBotTube().x, groundHeight);
                     }
-                    if (money < costArrow) {
-                        Color c = sb.getColor();
-                        sb.setColor(0, 0, 0, 0.5f);
-                        sb.draw(arrowBullet, tube.getPosBotTube().x - tube.getBottomTube().getWidth() / 2 + towerUpgradeMenu.getWidth() * 3 / 4 - arrowBullet.getWidth() / 2, groundHeight + towerUpgradeMenu.getHeight() * 3 / 4 - arrowBullet.getHeight() / 2);
-                        sb.setColor(c.r, c.g, c.b, 1f);
-                    } else {
-                        sb.draw(arrowBullet, tube.getPosBotTube().x - tube.getBottomTube().getWidth() / 2 + towerUpgradeMenu.getWidth() * 3 / 4 - arrowBullet.getWidth() / 2, groundHeight + towerUpgradeMenu.getHeight() * 3 / 4 - arrowBullet.getHeight() / 2);
-                        shortFont.draw(sb, "" + ((int) costArrow), tube.getPosBotTube().x - tube.getBottomTube().getWidth() / 2 + towerUpgradeMenu.getWidth() * 3 / 4 - cannonBullet.getWidth() / 2, groundHeight + towerUpgradeMenu.getHeight() * 3 / 4 - cannonBullet.getHeight() / 2);
-                    }
-                    if (money < costFire) {
-                        Color c = sb.getColor();
-                        sb.setColor(0, 0, 0, 0.5f);
-                        sb.draw(fireBullet, tube.getPosBotTube().x - tube.getBottomTube().getWidth() / 2 + towerUpgradeMenu.getWidth() / 4 - arrowBullet.getWidth() / 2, groundHeight + towerUpgradeMenu.getHeight() / 4 - arrowBullet.getHeight() / 2);
-                        sb.setColor(c.r, c.g, c.b, 1f);
-                    } else {
-                        sb.draw(fireBullet, tube.getPosBotTube().x - tube.getBottomTube().getWidth() / 2 + towerUpgradeMenu.getWidth() / 4 - arrowBullet.getWidth() / 2, groundHeight + towerUpgradeMenu.getHeight() / 4 - arrowBullet.getHeight() / 2);
-                        shortFont.draw(sb, "" + ((int) costFire), tube.getPosBotTube().x - tube.getBottomTube().getWidth() / 2 + towerUpgradeMenu.getWidth() / 4 - cannonBullet.getWidth() / 2, groundHeight + towerUpgradeMenu.getHeight() / 4 - cannonBullet.getHeight() / 2);
-                    }
-                }
-                else{
+                } else {
                     sb.draw(tube.getBottomTube(), tube.getPosBotTube().x, groundHeight);
                 }
             }
-            else {
-                sb.draw(tube.getBottomTube(), tube.getPosBotTube().x, groundHeight);
-            }
-        }
-        for(Bullet bullet: bullets) {
-            if(!bullet.isFired() && !bullet.isDead()) {
-                if(bullet.getClass().getName().equals("com.batmad.game.Sprites.ArrowBullet")){
-                    sb.draw(new TextureRegion(bullet.getTexture()),bullet.getPosition().x,bullet.getPosition().y, bullet.getTexture().getWidth()/2, bullet.getTexture().getHeight()/2, bullet.getTexture().getWidth(),bullet.getTexture().getHeight(),1,1,200 + bullet.angle());
-                }else {
-                    sb.draw(bullet.getTexture(), bullet.getPosition().x, bullet.getPosition().y);
+            for (Bullet bullet : bullets) {
+                if (!bullet.isFired() && !bullet.isDead()) {
+                    if (bullet.getClass().getName().equals("com.batmad.game.Sprites.ArrowBullet")) {
+                        sb.draw(new TextureRegion(bullet.getTexture()), bullet.getPosition().x, bullet.getPosition().y, bullet.getTexture().getWidth() / 2, bullet.getTexture().getHeight() / 2, bullet.getTexture().getWidth(), bullet.getTexture().getHeight(), 1, 1, 200 + bullet.angle());
+                    } else {
+                        sb.draw(bullet.getTexture(), bullet.getPosition().x, bullet.getPosition().y);
+                    }
                 }
-            }
 
-        }
-        for(Map.Entry<Integer,Fire> entry: fires.entrySet()){
-            Integer key = entry.getKey();
-            Fire fire = entry.getValue();
+            }
+            for (Map.Entry<Integer, Fire> entry : fires.entrySet()) {
+                Integer key = entry.getKey();
+                Fire fire = entry.getValue();
 
                 fire.getFire().draw(sb);
 
+            }
+
+
+            font.draw(sb, "" + ((int) lifes), 750, 40);
+            font.draw(sb, "" + ((int) money), 650, 40);
+            font.draw(sb, "BD:" + ((int) birdDead), 400, 40);
+            font.draw(sb, "BC:" + ((int) birdCount), 500, 40);
+            font.draw(sb, "LB:" + ((int) testTouchLeftBot), 300, 40);
+            font.draw(sb, "LT:" + ((int) testTouchLeftTop), 200, 40);
+            font.draw(sb, "RB:" + ((int) testTouchRightBot), 100, 40);
+            font.draw(sb, "RT:" + ((int) testTouchRightTop), 0, 40);
+            if (countNextWaveStart > 0)
+                font.draw(sb, String.valueOf(countNextWaveStart), 0, 200);
         }
-
-
-        font.draw(sb, "" + ((int)lifes), 750,40);
-        font.draw(sb, "" + ((int)money), 650,40);
-        font.draw(sb, "BD:" + ((int)birdDead), 400,40);
-        font.draw(sb, "BC:" + ((int)birdCount), 500,40);
-        font.draw(sb, "LB:" + ((int)testTouchLeftBot), 300,40);
-        font.draw(sb, "LT:" + ((int)testTouchLeftTop), 200,40);
-        font.draw(sb, "RB:" + ((int)testTouchRightBot), 100,40);
-        font.draw(sb, "RT:" + ((int)testTouchRightTop), 0,40);
         sb.end();
     }
 
@@ -507,6 +531,10 @@ public class PlayState extends State{
         rectLeftTop = new Rectangle(x,y + towerUpgradeMenu.getHeight()/2,towerUpgradeMenu.getWidth()/2,towerUpgradeMenu.getHeight()/2);
         rectRightTop = new Rectangle(x + towerUpgradeMenu.getWidth()/2,y + towerUpgradeMenu.getHeight()/2,towerUpgradeMenu.getWidth() / 2,towerUpgradeMenu.getHeight()/2);
         //Gdx.input.setCursorPosition(0,0);
+    }
+
+    private void gameOver(){
+
     }
 
     @Override

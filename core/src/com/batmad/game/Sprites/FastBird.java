@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
  * Created by tm on 19.01.2016.
  */
 public class FastBird extends Bird {
-    static private Texture texture = new Texture("bird/birdfullgreen.png");
+    static private Texture texture = new Texture("bird/birdanimationfast.png");
     private int MIN_HEIGHT = 250;
     private int MOVEMENT = 150;
     private int birdLifes = 5;

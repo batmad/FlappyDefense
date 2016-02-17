@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
  * Created by tm on 21.01.2016.
  */
 public class SprintBird extends Bird {
-    static Texture texture = new Texture("bird/birdred.png");
+    static Texture texture = new Texture("bird/birdanimationsprint.png");
     private int MIN_HEIGHT = 270;
     private int sprintMovement = 150;
     protected int birdLifes = 20;

@@ -42,7 +42,7 @@ public class Bullet {
     public void update(float dt){
         //velocity.add(BULLET_SPEED * velocity.x, BULLET_SPEED * velocity.y);
         // velocity.scl(dt);
-        velocity.add(target.getX() + target.getWidth(), target.getY());
+        velocity.add(target.getX() + target.getWidth()/2, target.getY());
         velocity.sub(position.x, position.y);
         velocity.scl(dt);
         position.add(dt * 400 * velocity.x, dt * 400 * velocity.y);

@@ -1,6 +1,7 @@
 package com.batmad.game.States;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
@@ -19,9 +20,15 @@ public class MenuState extends State {
     private Texture defaultBtn;
     private BitmapFont font;
     private Rectangle startBtn, levelsBtn, hiscoreBtn;
+    private Preferences prefs;
+    private int level;
+    PlayStateOptions levelOptions;
 
     public MenuState(GameStateManager gsm) {
         super(gsm);
+        prefs = Gdx.app.getPreferences("myPrefs");
+        level = prefs.getInteger("levels", 1);
+        levelOptions = new Levels().getLevelOptions(level);
         cam.setToOrtho(false, FlappyDefense.WIDTH, FlappyDefense.HEIGHT);
         background = new Texture("bg.png");
         playBtn = new Texture("playbtn.png");
@@ -35,9 +42,9 @@ public class MenuState extends State {
 
     @Override
     public void handleInput() {
-        if(touched(startBtn)){
-            //gsm.set(new PlayState(gsm));
-        } else if(touched(levelsBtn)){
+        if(touched(startBtn) && Gdx.input.justTouched()){
+            gsm.set(new PlayState(gsm, levelOptions));
+        } else if(touched(levelsBtn) && Gdx.input.justTouched()){
             gsm.set(new LevelState(gsm));
         }
     }
