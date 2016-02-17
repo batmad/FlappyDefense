@@ -117,7 +117,7 @@ public class LevelState extends State {
         sb.draw(background, background.getWidth(), 0);
         sb.draw(background, background.getWidth() * 2, 0);
         sb.draw(menu, FlappyDefense.WIDTH / 2 - menu.getWidth() / 2, 0);
-        drawFont(fontLetter, sb, "выберите уровень", FlappyDefense.WIDTH / 2 - 50, FlappyDefense.HEIGHT - 80);
+        drawFont(fontLetter, sb, "choose level", FlappyDefense.WIDTH / 2 - 50, FlappyDefense.HEIGHT - 80);
 
         int levelID = 0;
         for (int rowID = 1; rowID <= 3; rowID++) {

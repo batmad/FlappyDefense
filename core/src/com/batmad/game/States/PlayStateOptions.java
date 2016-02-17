@@ -7,8 +7,10 @@ import java.util.Map;
  */
 public class PlayStateOptions  {
     public Wave[] waves;
+    public int levelNumber;
 
-    PlayStateOptions(int wavesCount){
+    PlayStateOptions(int wavesCount, int levelNumber){
+        this.levelNumber = levelNumber;
         waves = new Wave[wavesCount];
         for(int i=0; i < wavesCount; i++){
             waves[i] = new Wave();
