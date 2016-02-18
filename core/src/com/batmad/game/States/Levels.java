@@ -10,24 +10,22 @@ public class Levels {
 
     public Levels() {
         levels = new PlayStateOptions[NUMBER_OF_LEVELS];
-        level1 = new PlayStateOptions(3,1);
-        level1.put(0, PlayStateOptions.Bird.SlowBird, 2);
-        level1.put(0, PlayStateOptions.Bird.Bird, 6);
-        level1.put(0, PlayStateOptions.Bird.FastBird, 3);
-        level1.put(0, PlayStateOptions.Bird.SprintBird, 10);
-        level1.put(1, PlayStateOptions.Bird.FastBird, 5);
-        level1.put(2, PlayStateOptions.Bird.Bird, 4);
+        level1 = new PlayStateOptions(1,1);
+        level1.put(0, PlayStateOptions.Bird.Bird, 40);
         levels[0] = level1;
 
-        level2 = new PlayStateOptions(4,2);
+        level2 = new PlayStateOptions(2,2);
         level2.put(0, PlayStateOptions.Bird.Bird, 10);
-        level2.put(1, PlayStateOptions.Bird.SlowBird, 10);
-        level2.put(2, PlayStateOptions.Bird.FastBird, 10);
-        level2.put(3, PlayStateOptions.Bird.SprintBird, 10);
+        level2.put(0, PlayStateOptions.Bird.Bird, 10);
+        level2.put(1, PlayStateOptions.Bird.SlowBird, 5);
         levels[1] = level2;
 
-        level3 = new PlayStateOptions(1,3);
-        level3.put(0, PlayStateOptions.Bird.Bird, 10);
+        level3 = new PlayStateOptions(2,3);
+        level3.put(0, PlayStateOptions.Bird.Bird, 20);
+        level3.put(0, PlayStateOptions.Bird.FastBird, 10);
+        level3.put(0, PlayStateOptions.Bird.SprintBird, 10);
+        level3.put(1, PlayStateOptions.Bird.Bird, 15);
+        level3.put(1, PlayStateOptions.Bird.FastBird, 15);
         levels[2] = level3;
 
         level4 = new PlayStateOptions(1,4);

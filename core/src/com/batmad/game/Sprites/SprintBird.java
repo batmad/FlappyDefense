@@ -8,9 +8,9 @@ import com.badlogic.gdx.graphics.Texture;
 public class SprintBird extends Bird {
     static Texture texture = new Texture("bird/birdanimationsprint.png");
     private int MIN_HEIGHT = 270;
-    private int sprintMovement = 150;
-    protected int birdLifes = 20;
-    protected int birdLifesMax = 20;
+    private int sprintMovement = 300;
+    protected int birdLifes = 5;
+    protected int birdLifesMax = birdLifes;
     protected int gold = 40;
 
     public SprintBird(int x){

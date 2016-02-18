@@ -26,7 +26,7 @@ public class Bird {
     protected Texture lifeTexture = new Texture("bird/life.png");;
     private Sound flap;
     protected int birdLifes = 15;
-    protected int birdLifesMax = 15;
+    protected int birdLifesMax = birdLifes;
     protected int gold = 20;
     private boolean isOverEdge, isDead, isTarget = false;
 
@@ -45,7 +45,7 @@ public class Bird {
     }
 
     public Bird(int x){
-        this(-x, MIN_HEIGHT - (new Random().nextInt(80)));
+        this(-x, MIN_HEIGHT );
     }
     public Bird(int x, Texture texture){
         this(x);

@@ -18,12 +18,22 @@ public class ArrowTube extends Tube{
 
     public ArrowTube(float x) {
         super(x, topTube, bottomTube, damage, fireRate, value);
-        posBotTube = new Vector2(x, - FlappyDefense.GROUND_Y_OFFSET);
+        posBotTube = new Vector2(x, FlappyDefense.GROUND_Y_OFFSET);
+        posTopTube = new Vector2(x, FlappyDefense.HEIGHT);
+    }
+
+    public ArrowTube(float x, boolean isTop) {
+        this(x);
+        super.isTop = isTop;
     }
 
     public Bullet fire(Rectangle target){
         //return damage;
-        Bullet bullet = new ArrowBullet(posBotTube.x , posBotTube.y + bottomTube.getHeight(), target, damage);
+        Bullet bullet;
+        if(isTop)
+            bullet = new ArrowBullet(posBotTube.x , posTopTube.y - bottomTube.getHeight(), target, damage);
+        else
+            bullet = new ArrowBullet(posBotTube.x , posBotTube.y + bottomTube.getHeight(), target, damage);
         return bullet;
     }
 }

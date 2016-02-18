@@ -20,7 +20,13 @@ public class FireTube extends Tube {
 
     public FireTube(float x){
         super(x, topTube, bottomTube, damage, fireRate, value);
-        posBotTube = new Vector2(x, - FlappyDefense.GROUND_Y_OFFSET);
+        posBotTube = new Vector2(x, FlappyDefense.GROUND_Y_OFFSET);
+    }
+
+    public FireTube(float x, boolean isTop){
+        super(x, topTube, bottomTube, damage, fireRate, value);
+        posBotTube = new Vector2(x, FlappyDefense.GROUND_Y_OFFSET);
+        super.isTop = isTop;
     }
 
 

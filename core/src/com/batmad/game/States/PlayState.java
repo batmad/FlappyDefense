@@ -2,6 +2,7 @@ package com.batmad.game.States;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -31,12 +32,15 @@ import java.util.Map;
  * Created by tm on 19.11.2015.
  */
 public class PlayState extends State {
-    private static final int TUBE_SPACING = 125;
+    private static final int TUBE_SPACING = 100;
     private static final int TUBE_COUNT = 4;
     private static int groundHeight;
 
     private PlayStateOptions options;
-    private int lifes = 20;
+    private Bird target;
+    private Preferences prefs;
+
+    private int lifes = 5;
     private int birdCount;
     private int birdDead = 0;
     private int birdDeadTotal;
@@ -46,12 +50,20 @@ public class PlayState extends State {
     private int idOfTube;
     private int numberOfWaves;
     private int currentWave;
+    private int currentMaxLevel;
+    private int currentLevelNumber;
     private int countNextWaveStart = -1;
     private float btnAnimTime;
     private long countNextWaveStartTimeMillis;
 
     private boolean isTouched = false;
     private boolean wonGame = false;
+    private boolean loseGame = false;
+    private boolean isPopup;
+    private boolean passTutorial;
+    private boolean passTutorialStartWave;
+    private boolean passTutorialBuildTower;
+    private boolean isPlayedWonSound;
 
     private Texture background;
     private Texture ground;
@@ -64,11 +76,16 @@ public class PlayState extends State {
     private Texture replayBtn;
     private Texture nextLevelBtn;
     private Texture backBtn;
+    private Texture pointer;
+    private TextureRegion groundAbove;
     private Vector2 groundPos1, groundPos2;
     private Animation buttonClicked, buttonClickedReverse;
+    private Sound win;
+    private Sound lose;
 
     private ArrayList<Tube> tubes;
     private ArrayList<Bird> birds;
+    private ArrayList<Bird> birdsInStock;
     private ArrayList<Bullet> bullets;
     private HashMap<Integer, Fire> fires;
 
@@ -84,20 +101,25 @@ public class PlayState extends State {
     private Rectangle rectRightBot;
     private Rectangle rectLeftTop;
     private Rectangle rectRightTop;
-    private boolean isPopup;
 
-    Bird target;
-    boolean hasTarget;
-    private Preferences prefs;
 
     public PlayState(GameStateManager gsm, PlayStateOptions options) {
         super(gsm);
         prefs = Gdx.app.getPreferences("myPrefs");
-
+        currentMaxLevel = prefs.getInteger("levels", 1);
+        passTutorial = prefs.getBoolean("passTutorial", false);
+        if(!passTutorial){
+            passTutorialBuildTower = false;
+            passTutorialStartWave = false;
+        }
         this.currentWave = 0;
         this.options = options;
         this.numberOfWaves = options.waves.length;
+        this.currentLevelNumber = options.levelNumber;
         birdCount = options.waves[currentWave].numberOfBirds();
+
+        win = Gdx.audio.newSound(Gdx.files.internal("win.ogg"));
+        lose = Gdx.audio.newSound(Gdx.files.internal("lose.ogg"));
 
         cam.setToOrtho(false, FlappyDefense.WIDTH, FlappyDefense.HEIGHT);
 
@@ -112,6 +134,9 @@ public class PlayState extends State {
         replayBtn = new Texture("menu/replay.png");
         nextLevelBtn = new Texture("menu/nextlevel.png");
         backBtn = new Texture("menu/back.png");
+        pointer = new Texture("menu/pointer.png");
+        groundAbove = new TextureRegion(ground);
+        groundAbove.flip(true, true);
 
         startWaveBounds = new Rectangle(10, FlappyDefense.HEIGHT / 2, startWaveBtn.getWidth(), startWaveBtn.getHeight());
         backBtnRect = new Rectangle(cam.position.x - 3 * replayBtn.getWidth() / 2, cam.position.y - menu.getHeight() / 2 + 50, backBtn.getWidth(), backBtn.getHeight());
@@ -130,10 +155,11 @@ public class PlayState extends State {
                 new TextureRegion(new Texture("playbtn.png"))
         );
 
-        groundHeight = FlappyDefense.GROUND_Y_OFFSET + ground.getHeight();
+        //groundHeight = FlappyDefense.GROUND_Y_OFFSET + ground.getHeight();
 
         tubes = new ArrayList<Tube>();
         birds = new ArrayList<Bird>();
+        birdsInStock = new ArrayList<Bird>();
         bullets = new ArrayList<Bullet>();
         fires = new HashMap<Integer, Fire>();
 
@@ -144,6 +170,8 @@ public class PlayState extends State {
 
         for (int i = 1; i <= TUBE_COUNT; i++) {
             tubes.add(new Tube(i * (TUBE_SPACING + Tube.TUBE_WIDTH)));
+            if(currentLevelNumber > 5)
+                tubes.add(new Tube(i * (TUBE_SPACING + Tube.TUBE_WIDTH), true));
         }
 
     }
@@ -157,10 +185,15 @@ public class PlayState extends State {
             birdCreate();
             isTouched = true;
             countNextWaveStart = -1;
+            passTutorialStartWave = true;
             //for(Tube tube:tubes){
             //tube.grow();
             //}
         } else if (wonGame) {
+            if(!isPlayedWonSound) {
+                win.play(0.1f);
+                isPlayedWonSound = true;
+            }
             if (touched(backBtnRect) && Gdx.input.justTouched()) {
                 gsm.set(new MenuState(gsm));
             } else if (touched(replatBtnRect) && Gdx.input.justTouched()) {
@@ -169,8 +202,17 @@ public class PlayState extends State {
                 PlayStateOptions options = new Levels().getLevelOptions(this.options.levelNumber + 1);
                 gsm.set(new PlayState(gsm, options));
             }
+        }else if (loseGame) {
+            if (!isPlayedWonSound) {
+                lose.play(0.1f);
+                isPlayedWonSound = true;
+            }
+            if (touched(backBtnRect) && Gdx.input.justTouched()) {
+                gsm.set(new MenuState(gsm));
+            } else if (touched(replatBtnRect) && Gdx.input.justTouched()) {
+                gsm.set(new PlayState(gsm, options));
+            }
         }
-
     }
 
     public void countNextWaveStart() {
@@ -217,30 +259,30 @@ public class PlayState extends State {
                 case Bird:
                     for (int j = 0; j < numberOfBirds; j++) {
                         i++;
-                        birds.add(new Bird(i * 3 * 20));
+                        birdsInStock.add(new Bird(70));
                     }
                     break;
                 case SprintBird:
                     for (int j = 0; j < numberOfBirds; j++) {
                         i++;
-                        birds.add(new SprintBird(i * 3 * 20));
+                        birdsInStock.add(new SprintBird(70));
                     }
                     break;
                 case SlowBird:
                     for (int j = 0; j < numberOfBirds; j++) {
                         i++;
-                        birds.add(new SlowBird(i * 20));
+                        birdsInStock.add(new SlowBird(70));
                     }
                     break;
                 case FastBird:
                     for (int j = 0; j < numberOfBirds; j++) {
                         i++;
-                        birds.add(new FastBird(i * 3 * 20));
+                        birdsInStock.add(new FastBird(70));
                     }
                     break;
             }
         }
-        target = birds.get(0);
+        target = birdsInStock.get(0);
     }
 
     private Bird getLastBird() {
@@ -250,6 +292,16 @@ public class PlayState extends State {
 
     @Override
     public void update(float dt) {
+        if(!birdsInStock.isEmpty()){
+            if(birds.isEmpty()) {
+                birds.add(birdsInStock.get(0));
+                birdsInStock.remove(0);
+            }
+            else if(getLastBird().getPosition().x > 0){
+                birds.add(birdsInStock.get(0));
+                birdsInStock.remove(0);
+            }
+        }
         handleInput();
         countNextWaveStart();
 
@@ -362,7 +414,7 @@ public class PlayState extends State {
         }
 
         if (currentWave == numberOfWaves) {
-            if (options.levelNumber < Levels.NUMBER_OF_LEVELS) {
+            if (options.levelNumber < Levels.NUMBER_OF_LEVELS & options.levelNumber >= currentMaxLevel) {
                 prefs.putInteger("levels", options.levelNumber + 1);
                 prefs.flush();
             }
@@ -380,9 +432,14 @@ public class PlayState extends State {
         //if(tubes.get(i).collides(bird.getBounds()))
         //gsm.set(new MenuState(gsm));
         if (isPopup) {
+            passTutorialBuildTower = true;
             if (touched(rectRightTop) && Gdx.input.justTouched()) {
                 testTouchRightTop++;
-                Tube upgradeTube = new ArrowTube(tubes.get(idOfTube).getPosTopTube().x);
+                Tube upgradeTube;
+                if(tubes.get(idOfTube).isTop)
+                    upgradeTube = new ArrowTube(tubes.get(idOfTube).getPosTopTube().x, true);
+                else
+                    upgradeTube = new ArrowTube(tubes.get(idOfTube).getPosTopTube().x);
                 if (money > upgradeTube.getValue()) {
                     tubes.set(idOfTube, upgradeTube);
                     money -= tubes.get(idOfTube).getValue();
@@ -391,7 +448,11 @@ public class PlayState extends State {
             }
             if (touched(rectLeftTop) && Gdx.input.justTouched()) {
                 testTouchLeftTop++;
-                Tube upgradeTube = new TubeGrowed(tubes.get(idOfTube).getPosTopTube().x);
+                Tube upgradeTube;
+                if(tubes.get(idOfTube).isTop)
+                    upgradeTube = new TubeGrowed(tubes.get(idOfTube).getPosTopTube().x, true);
+                else
+                    upgradeTube = new TubeGrowed(tubes.get(idOfTube).getPosTopTube().x);
                 if (money > upgradeTube.getValue()) {
                     tubes.set(idOfTube, upgradeTube);
                     money -= tubes.get(idOfTube).getValue();
@@ -400,7 +461,11 @@ public class PlayState extends State {
             }
             if (Gdx.input.justTouched() && touched(rectLeftBot)) {
                 testTouchLeftBot++;
-                Tube upgradeTube = new FireTube(tubes.get(idOfTube).getPosTopTube().x);
+                Tube upgradeTube;
+                if(tubes.get(idOfTube).isTop)
+                    upgradeTube = new FireTube(tubes.get(idOfTube).getPosTopTube().x, true);
+                else
+                    upgradeTube = new FireTube(tubes.get(idOfTube).getPosTopTube().x);
                 Fire fire = new Fire(upgradeTube.getPosBotTube().x + upgradeTube.getBottomTube().getWidth() / 2, upgradeTube.getPosBotTube().y + upgradeTube.getBottomTube().getHeight(), upgradeTube.getDamage());
                 if (money > upgradeTube.getValue()) {
                     fires.put(idOfTube, fire);
@@ -423,9 +488,15 @@ public class PlayState extends State {
         }
         // }
         if (lifes < 0) {
-            gameOver();
+            loseGame = true;
+            birds = new ArrayList<Bird>();
         }
         cam.update();
+        if(passTutorialBuildTower && passTutorialStartWave){
+            passTutorial = true;
+            prefs.putBoolean("passTutorial",true);
+            prefs.flush();
+        }
     }
 
     @Override
@@ -433,9 +504,11 @@ public class PlayState extends State {
         sb.setProjectionMatrix(cam.combined);
         sb.begin();
         sb.draw(background, 0, 0);
-//        sb.draw(ground, 0, FlappyDefense.GROUND_Y_OFFSET);
-//        sb.draw(ground, ground.getWidth(), FlappyDefense.GROUND_Y_OFFSET);
-//        sb.draw(ground, 2 * ground.getWidth(), FlappyDefense.GROUND_Y_OFFSET);
+        if(currentLevelNumber > 5) {
+            sb.draw(groundAbove, 0, FlappyDefense.HEIGHT - FlappyDefense.GROUND_Y_OFFSET);
+            sb.draw(groundAbove, ground.getWidth(), FlappyDefense.HEIGHT - FlappyDefense.GROUND_Y_OFFSET);
+            sb.draw(groundAbove, 2 * ground.getWidth(), FlappyDefense.HEIGHT - FlappyDefense.GROUND_Y_OFFSET);
+        }
         if (wonGame) {
             sb.draw(menu, cam.position.x - menu.getWidth() / 2, cam.position.y - menu.getHeight() / 2);
             fontLetter.draw(sb, "WIN!", FlappyDefense.WIDTH / 2 - 40, FlappyDefense.HEIGHT - 30);
@@ -445,7 +518,15 @@ public class PlayState extends State {
             sb.draw(replayBtn, cam.position.x - replayBtn.getWidth() / 2, cam.position.y - menu.getHeight() / 2 + 50);
             if(options.levelNumber < 15)
                 sb.draw(nextLevelBtn, cam.position.x + replayBtn.getWidth() / 2, cam.position.y - menu.getHeight() / 2 + 50);
-        } else {
+        } else if(loseGame){
+            sb.draw(menu, cam.position.x - menu.getWidth() / 2, cam.position.y - menu.getHeight() / 2);
+            fontLetter.draw(sb, "LOSE!", FlappyDefense.WIDTH / 2 - 40, FlappyDefense.HEIGHT - 30);
+            font.draw(sb, String.valueOf(score), cam.position.x, cam.position.y + 15);
+            font.draw(sb, String.valueOf(birdDeadTotal), cam.position.x, cam.position.y - 45);
+            sb.draw(backBtn, cam.position.x - 3 * replayBtn.getWidth() / 2, cam.position.y - menu.getHeight() / 2 + 50);
+            sb.draw(replayBtn, cam.position.x - replayBtn.getWidth() / 2, cam.position.y - menu.getHeight() / 2 + 50);
+        }
+        else {
             if (!isTouched) {
                 sb.draw(startWaveBtn, 10, FlappyDefense.HEIGHT / 2);
             } else {
@@ -477,40 +558,46 @@ public class PlayState extends State {
                         int costCannon = new TubeGrowed(0).getValue();
                         int costArrow = new ArrowTube(0).getValue();
                         int costFire = new FireTube(0).getValue();
-                        makeMenuBounds(tube.getPosBotTube().x - tube.getBottomTube().getWidth() / 2, groundHeight, tubes.indexOf(tube));
-                        sb.draw(towerUpgradeMenu, tube.getPosBotTube().x - tube.getBottomTube().getWidth() / 2, groundHeight);
+                        float menuPositionX = tube.getPosBotTube().x - tube.getBottomTube().getWidth() / 2;
+                        float menuPositionY = tube.getPosBotTube().y - 50;
+                        float menuLeftPositionX = menuPositionX + towerUpgradeMenu.getWidth() / 4;
+                        float menuRightPositionX = menuPositionX + towerUpgradeMenu.getWidth() * 3 / 4;
+                        float menuTopPositionY = menuPositionY + towerUpgradeMenu.getHeight() * 3 / 4;
+                        float menuBotPositionY = menuPositionY + towerUpgradeMenu.getHeight() / 4;
+                        makeMenuBounds(menuPositionX, menuPositionY, tubes.indexOf(tube));
+                        sb.draw(towerUpgradeMenu, menuPositionX, menuPositionY);
                         if (money < costCannon) {
                             Color c = sb.getColor();
                             sb.setColor(0, 0, 0, 0.5f);
-                            sb.draw(cannonBullet, tube.getPosBotTube().x - tube.getBottomTube().getWidth() / 2 + towerUpgradeMenu.getWidth() / 4 - cannonBullet.getWidth() / 2, groundHeight + towerUpgradeMenu.getHeight() * 3 / 4 - cannonBullet.getHeight() / 2);
+                            sb.draw(cannonBullet, menuLeftPositionX - cannonBullet.getWidth() / 2, menuTopPositionY - cannonBullet.getHeight() / 2);
                             sb.setColor(c.r, c.g, c.b, 1f);
                         } else {
-                            sb.draw(cannonBullet, tube.getPosBotTube().x - tube.getBottomTube().getWidth() / 2 + towerUpgradeMenu.getWidth() / 4 - cannonBullet.getWidth() / 2, groundHeight + towerUpgradeMenu.getHeight() * 3 / 4 - cannonBullet.getHeight() / 2);
-                            shortFont.draw(sb, "" + ((int) costCannon), tube.getPosBotTube().x - tube.getBottomTube().getWidth() / 2 + towerUpgradeMenu.getWidth() / 4 - cannonBullet.getWidth() / 2, groundHeight + towerUpgradeMenu.getHeight() * 3 / 4 - cannonBullet.getHeight() / 2);
+                            sb.draw(cannonBullet, menuLeftPositionX - cannonBullet.getWidth() / 2, menuTopPositionY - cannonBullet.getHeight() / 2);
+                            shortFont.draw(sb, "" + ((int) costCannon), menuLeftPositionX - cannonBullet.getWidth() / 2, menuTopPositionY - cannonBullet.getHeight() / 2);
                         }
                         if (money < costArrow) {
                             Color c = sb.getColor();
                             sb.setColor(0, 0, 0, 0.5f);
-                            sb.draw(arrowBullet, tube.getPosBotTube().x - tube.getBottomTube().getWidth() / 2 + towerUpgradeMenu.getWidth() * 3 / 4 - arrowBullet.getWidth() / 2, groundHeight + towerUpgradeMenu.getHeight() * 3 / 4 - arrowBullet.getHeight() / 2);
+                            sb.draw(arrowBullet, menuRightPositionX - arrowBullet.getWidth() / 2, menuTopPositionY - arrowBullet.getHeight() / 2);
                             sb.setColor(c.r, c.g, c.b, 1f);
                         } else {
-                            sb.draw(arrowBullet, tube.getPosBotTube().x - tube.getBottomTube().getWidth() / 2 + towerUpgradeMenu.getWidth() * 3 / 4 - arrowBullet.getWidth() / 2, groundHeight + towerUpgradeMenu.getHeight() * 3 / 4 - arrowBullet.getHeight() / 2);
-                            shortFont.draw(sb, "" + ((int) costArrow), tube.getPosBotTube().x - tube.getBottomTube().getWidth() / 2 + towerUpgradeMenu.getWidth() * 3 / 4 - cannonBullet.getWidth() / 2, groundHeight + towerUpgradeMenu.getHeight() * 3 / 4 - cannonBullet.getHeight() / 2);
+                            sb.draw(arrowBullet, menuRightPositionX - arrowBullet.getWidth() / 2, menuTopPositionY - arrowBullet.getHeight() / 2);
+                            shortFont.draw(sb, "" + ((int) costArrow), menuRightPositionX - cannonBullet.getWidth() / 2, menuTopPositionY - cannonBullet.getHeight() / 2);
                         }
                         if (money < costFire) {
                             Color c = sb.getColor();
                             sb.setColor(0, 0, 0, 0.5f);
-                            sb.draw(fireBullet, tube.getPosBotTube().x - tube.getBottomTube().getWidth() / 2 + towerUpgradeMenu.getWidth() / 4 - arrowBullet.getWidth() / 2, groundHeight + towerUpgradeMenu.getHeight() / 4 - arrowBullet.getHeight() / 2);
+                            sb.draw(fireBullet, menuLeftPositionX - arrowBullet.getWidth() / 2, menuBotPositionY - arrowBullet.getHeight() / 2);
                             sb.setColor(c.r, c.g, c.b, 1f);
                         } else {
-                            sb.draw(fireBullet, tube.getPosBotTube().x - tube.getBottomTube().getWidth() / 2 + towerUpgradeMenu.getWidth() / 4 - arrowBullet.getWidth() / 2, groundHeight + towerUpgradeMenu.getHeight() / 4 - arrowBullet.getHeight() / 2);
-                            shortFont.draw(sb, "" + ((int) costFire), tube.getPosBotTube().x - tube.getBottomTube().getWidth() / 2 + towerUpgradeMenu.getWidth() / 4 - cannonBullet.getWidth() / 2, groundHeight + towerUpgradeMenu.getHeight() / 4 - cannonBullet.getHeight() / 2);
+                            sb.draw(fireBullet, menuLeftPositionX - arrowBullet.getWidth() / 2, menuBotPositionY - arrowBullet.getHeight() / 2);
+                            shortFont.draw(sb, "" + ((int) costFire), menuLeftPositionX - cannonBullet.getWidth() / 2, menuBotPositionY - cannonBullet.getHeight() / 2);
                         }
                     } else {
-                        sb.draw(tube.getBottomTube(), tube.getPosBotTube().x, groundHeight);
+                        sb.draw(tube.getBottomTube(), tube.getPosBotTube().x, tube.getPosBotTube().y);
                     }
                 } else {
-                    sb.draw(tube.getBottomTube(), tube.getPosBotTube().x, groundHeight);
+                    sb.draw(tube.getBottomTube(), tube.getPosBotTube().x, tube.getPosBotTube().y);
                 }
             }
             for (Bullet bullet : bullets) {
@@ -535,13 +622,19 @@ public class PlayState extends State {
             font.draw(sb, "" + ((int) lifes), 750, 40);
             font.draw(sb, "" + ((int) money), 650, 40);
             font.draw(sb, "BD:" + ((int) birdDead), 400, 40);
-            font.draw(sb, "BC:" + ((int) birdCount), 500, 40);
-            font.draw(sb, "LB:" + ((int) testTouchLeftBot), 300, 40);
-            font.draw(sb, "LT:" + ((int) testTouchLeftTop), 200, 40);
-            font.draw(sb, "RB:" + ((int) testTouchRightBot), 100, 40);
-            font.draw(sb, "RT:" + ((int) testTouchRightTop), 0, 40);
+
             if (countNextWaveStart > 0)
                 font.draw(sb, String.valueOf(countNextWaveStart), 0, 200);
+        }
+        if(!passTutorial){
+            if(!passTutorialStartWave){
+                sb.draw(pointer, 10 + startWaveBtn.getWidth() - 30, cam.position.y + startWaveBtn.getHeight() - 30);
+                font.draw(sb,"start the wave",cam.position.x - 160, cam.position.y + 140);
+            }
+            if(!passTutorialBuildTower) {
+                sb.draw(pointer, 190, 80);
+                font.draw(sb, "build Towers", cam.position.x - 50, cam.position.y - 50);
+            }
         }
         sb.end();
     }

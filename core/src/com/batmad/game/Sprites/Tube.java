@@ -22,12 +22,12 @@ public class Tube {
     private long clearSky;
     private Rectangle target;
     private boolean hasTarget;
-
+    public boolean isTop;
 
 
     public Tube(float x){
-        posTopTube = new Vector2(x, FlappyDefense.HEIGHT - topTube.getHeight());
-        posBotTube = new Vector2(x, - FlappyDefense.GROUND_Y_OFFSET);
+        posTopTube = new Vector2(x, FlappyDefense.HEIGHT - FlappyDefense.GROUND_Y_OFFSET - topTube.getHeight());
+        posBotTube = new Vector2(x, FlappyDefense.GROUND_Y_OFFSET);
 
         boundsTop = new Rectangle(posTopTube.x, posTopTube.y, topTube.getWidth(), topTube.getHeight());
         boundsBot = new Rectangle(posBotTube.x, posBotTube.y, bottomTube.getWidth(), bottomTube.getHeight());
@@ -38,8 +38,13 @@ public class Tube {
         //fireRate = 500;
         clearSky = 0;
         value = 120;
-
     }
+
+    public Tube(float x, boolean isTop){
+        this(x);
+        this.isTop = isTop;
+    }
+
 
     public Tube(float x, Texture topTube, Texture bottomTube, int damage, int fireRate, int value) {
         this(x);
@@ -48,7 +53,7 @@ public class Tube {
         this.damage = damage;
         this.fireRate = fireRate;
         this.value = value;
-        posTopTube = new Vector2(x, FlappyDefense.HEIGHT - topTube.getHeight());
+        posTopTube = new Vector2(x, FlappyDefense.HEIGHT - FlappyDefense.GROUND_Y_OFFSET - topTube.getHeight());
     }
 
 
@@ -62,7 +67,10 @@ public class Tube {
 
 
     public Texture getBottomTube() {
-        return bottomTube;
+        if(isTop)
+            return topTube;
+        else
+            return bottomTube;
     }
 
     public Vector2 getPosTopTube() {
@@ -70,11 +78,17 @@ public class Tube {
     }
 
     public Vector2 getPosBotTube() {
-        return posBotTube;
+        if(isTop)
+            return posTopTube;
+        else
+            return posBotTube;
     }
 
     public Rectangle getBoundsBot() {
-        return boundsBot;
+        if(isTop)
+            return boundsTop;
+        else
+            return boundsBot;
     }
 
     public Rectangle getBoundsTop() {
@@ -103,7 +117,11 @@ public class Tube {
 
     public Bullet fire(Rectangle target){
         //return damage;
-        Bullet bullet = new Bullet(posBotTube.x + bottomTube.getWidth()/2, posBotTube.y + bottomTube.getHeight(), target, damage);
+        Bullet bullet;
+        if(isTop)
+            bullet = new Bullet(posBotTube.x + bottomTube.getWidth()/2, posTopTube.y, target, damage);
+        else
+            bullet = new Bullet(posBotTube.x + bottomTube.getWidth()/2, posBotTube.y + bottomTube.getHeight(), target, damage);
         return bullet;
     }
 

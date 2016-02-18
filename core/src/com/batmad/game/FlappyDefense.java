@@ -13,7 +13,7 @@ import com.batmad.game.States.MenuState;
 public class FlappyDefense extends ApplicationAdapter {
 	public static final int WIDTH = 800;
 	public static final int HEIGHT = 480;
-	public static final int GROUND_Y_OFFSET = -50;
+	public static final int GROUND_Y_OFFSET = 62;
 
 	public static final String TITLE = "Flappy Bird";
 	private GameStateManager gsm;
@@ -25,7 +25,7 @@ public class FlappyDefense extends ApplicationAdapter {
 	@Override
 	public void create () {
 		Preferences prefs = Gdx.app.getPreferences("myPrefs");
-//		prefs.putInteger("levels",3);
+//		prefs.putInteger("levels",14);
 //		prefs.flush();
 //		prefs.remove("levels");
 		batch = new SpriteBatch();

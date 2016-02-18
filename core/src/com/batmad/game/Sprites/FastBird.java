@@ -9,8 +9,8 @@ public class FastBird extends Bird {
     static private Texture texture = new Texture("bird/birdanimationfast.png");
     private int MIN_HEIGHT = 250;
     private int MOVEMENT = 150;
-    private int birdLifes = 5;
-    private int birdLifesMax = 5;
+    private int birdLifes = 15;
+    private int birdLifesMax = birdLifes;
     private int gold = 30;
     private boolean isOverEdge, isDead, isTarget = false;
 

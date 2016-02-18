@@ -8,9 +8,9 @@ import com.badlogic.gdx.graphics.Texture;
 public class SlowBird extends Bird {
     static private Texture texture = new Texture("bird/birdanimationslow.png");
     private int MIN_HEIGHT = 225;
-    private int MOVEMENT = 50;
-    private int birdLifes = 30;
-    private int birdLifesMax = 30;
+    private int MOVEMENT = 30;
+    private int birdLifes = 50;
+    private int birdLifesMax = birdLifes;
     private int gold = 40;
     private boolean isOverEdge, isDead, isTarget = false;
 

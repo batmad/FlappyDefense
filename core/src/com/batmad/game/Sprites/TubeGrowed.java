@@ -23,6 +23,11 @@ public class TubeGrowed extends Tube {
     public TubeGrowed(float x) {
         super(x, topTube, bottomTube, damage, fireRate, value);
     }
+    public TubeGrowed(float x, boolean isTop) {
+        super(x, topTube, bottomTube, damage, fireRate, value);
+        super.isTop = isTop;
+    }
+
 
 
 
