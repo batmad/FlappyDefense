@@ -20,24 +20,31 @@ public class Levels {
         level2.put(1, PlayStateOptions.Bird.SlowBird, 5);
         levels[1] = level2;
 
-        level3 = new PlayStateOptions(2,3);
+        level3 = new PlayStateOptions(3,3);
         level3.put(0, PlayStateOptions.Bird.Bird, 20);
         level3.put(0, PlayStateOptions.Bird.FastBird, 10);
         level3.put(0, PlayStateOptions.Bird.SprintBird, 10);
         level3.put(1, PlayStateOptions.Bird.Bird, 15);
         level3.put(1, PlayStateOptions.Bird.FastBird, 15);
+        level3.put(2, PlayStateOptions.Bird.Boss1, 1);
         levels[2] = level3;
 
         level4 = new PlayStateOptions(1,4);
         level4.put(0, PlayStateOptions.Bird.Bird, 10);
+        level4.put(0, PlayStateOptions.Bird.SprintBird, 10);
+        level4.put(0, PlayStateOptions.Bird.FastBird, 10);
         levels[3] = level4;
 
         level5 = new PlayStateOptions(1,5);
         level5.put(0, PlayStateOptions.Bird.Bird, 10);
         levels[4] = level5;
 
-        level6 = new PlayStateOptions(1,6);
-        level6.put(0, PlayStateOptions.Bird.Bird, 10);
+        level6 = new PlayStateOptions(3,6);
+        level6.put(0, PlayStateOptions.Bird.Bird, 15);
+        level6.put(0, PlayStateOptions.Bird.BirdZerg, 30);
+        level6.put(1, PlayStateOptions.Bird.BirdStupid, 10);
+        level6.put(1, PlayStateOptions.Bird.BirdHealer, 1);
+        level6.put(2, PlayStateOptions.Bird.Boss2, 1);
         levels[5] = level6;
 
         level7 = new PlayStateOptions(1,7);
@@ -48,8 +55,9 @@ public class Levels {
         level8.put(0, PlayStateOptions.Bird.Bird, 10);
         levels[7] = level8;
 
-        level9 = new PlayStateOptions(1,9);
+        level9 = new PlayStateOptions(2,9);
         level9.put(0, PlayStateOptions.Bird.Bird, 10);
+        level9.put(1, PlayStateOptions.Bird.Boss3, 1);
         levels[8] = level9;
 
         level10 = new PlayStateOptions(1,10);
@@ -60,8 +68,9 @@ public class Levels {
         level11.put(0, PlayStateOptions.Bird.Bird, 10);
         levels[10] = level11;
 
-        level12 = new PlayStateOptions(1,12);
+        level12 = new PlayStateOptions(2,12);
         level12.put(0, PlayStateOptions.Bird.Bird, 10);
+        level12.put(1, PlayStateOptions.Bird.Boss4, 1);
         levels[11] = level12;
 
         level13 = new PlayStateOptions(1,13);
@@ -72,8 +81,9 @@ public class Levels {
         level14.put(0, PlayStateOptions.Bird.Bird, 10);
         levels[13] = level14;
 
-        level15 = new PlayStateOptions(1,15);
+        level15 = new PlayStateOptions(2,15);
         level15.put(0, PlayStateOptions.Bird.Bird, 10);
+        level15.put(1, PlayStateOptions.Bird.Boss5, 1);
         levels[14] = level15;
     }
 

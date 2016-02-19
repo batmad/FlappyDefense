@@ -19,6 +19,7 @@ public class TubeGrowed extends Tube {
     static private int damage = 10;
     static private int fireRate = 1500;
     static private int value = 150;
+    private int upgradeCost = 110;
 
     public TubeGrowed(float x) {
         super(x, topTube, bottomTube, damage, fireRate, value);
@@ -28,7 +29,22 @@ public class TubeGrowed extends Tube {
         super.isTop = isTop;
     }
 
+    @Override
+    public int getUpgradeCost() {
+        return upgradeCost;
+    }
 
+    @Override
+    public void upgrade(){
+        totalValue = totalValue + upgradeCost;
+        damage = damage * 2;
+        upgradeCost = upgradeCost * 2;
+        fireRate = fireRate - 150;
+    }
+
+    public void setUpgradeCost(int upgradeCost) {
+        this.upgradeCost = upgradeCost;
+    }
 
 
 }

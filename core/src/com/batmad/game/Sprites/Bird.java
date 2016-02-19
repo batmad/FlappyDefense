@@ -20,16 +20,16 @@ public class Bird {
     private static final int MIN_HEIGHT = 200;
     protected Vector3 position;
     protected Vector3 velocity;
-    private Rectangle bounds;
-    private Animation birdAnimation;
+    protected Rectangle bounds;
+    protected Animation birdAnimation;
     protected Texture texture = new Texture("bird/birdanimation.png");;
     protected Texture lifeTexture = new Texture("bird/life.png");;
-    private Sound flap;
+    protected Sound flap;
     protected int birdLifes = 15;
     protected int birdLifesMax = birdLifes;
     protected int gold = 20;
     private boolean isOverEdge, isDead, isTarget = false;
-
+    private long lastHealedTimeStamp;
 
     public Bird(int x, int y){
         position = new Vector3(x,y,0);
@@ -71,6 +71,10 @@ public class Bird {
 
     public Vector3 getPosition(){
         return position;
+    }
+
+    public int getBirdLifesMax() {
+        return birdLifesMax;
     }
 
     public TextureRegion getTexture(){
@@ -117,6 +121,9 @@ public class Bird {
     public void loseLife(int damage){
         birdLifes -= damage;
     }
+    public void healLife(int heal){
+        birdLifes += heal;
+    }
 
     public int getLifes() {
         return birdLifes;
@@ -136,6 +143,14 @@ public class Bird {
 
     public void setIsTarget(boolean isTarget) {
         this.isTarget = isTarget;
+    }
+
+    public long getLastHealedTimeStamp() {
+        return lastHealedTimeStamp;
+    }
+
+    public void setLastHealedTimeStamp(long lastHealedTimeStamp) {
+        this.lastHealedTimeStamp = lastHealedTimeStamp;
     }
 
     public void dispose(){

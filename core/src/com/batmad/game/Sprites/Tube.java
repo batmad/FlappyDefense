@@ -12,16 +12,17 @@ import java.util.Random;
  */
 public class Tube {
     public static final int TUBE_WIDTH = 52;
-    private Texture topTube = new Texture("toptubeclosed.png");
-    private Texture bottomTube = new Texture("bottomtubeclosed.png");
-    private Vector2 posTopTube, posBotTube;
+    protected Texture topTube = new Texture("toptubeclosed.png");
+    protected Texture bottomTube = new Texture("bottomtubeclosed.png");
+    protected Vector2 posTopTube, posBotTube;
     private Rectangle boundsTop, boundsBot, fieldOfView;
-    private int damage;
-    private int value;
-    private int fireRate;
-    private long clearSky;
-    private Rectangle target;
-    private boolean hasTarget;
+    protected int damage;
+    protected int value;
+    protected int totalValue;
+    protected int fireRate;
+    protected long clearSky;
+    protected Rectangle target;
+    protected boolean hasTarget;
     public boolean isTop;
 
 
@@ -38,6 +39,7 @@ public class Tube {
         //fireRate = 500;
         clearSky = 0;
         value = 120;
+        totalValue = value;
     }
 
     public Tube(float x, boolean isTop){
@@ -53,6 +55,7 @@ public class Tube {
         this.damage = damage;
         this.fireRate = fireRate;
         this.value = value;
+        totalValue = value;
         posTopTube = new Vector2(x, FlappyDefense.HEIGHT - FlappyDefense.GROUND_Y_OFFSET - topTube.getHeight());
     }
 
@@ -132,6 +135,18 @@ public class Tube {
     public void dispose(){
         topTube.dispose();
         bottomTube.dispose();
+    }
+
+    public void upgrade(){
+        //NOP
+    }
+
+    public int getTotalValue() {
+        return totalValue;
+    }
+
+    public int getUpgradeCost(){
+        return 0;
     }
 
     public Rectangle getTarget() {

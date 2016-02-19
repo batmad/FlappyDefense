@@ -15,6 +15,7 @@ public class FireTube extends Tube {
     static private int fireRate = 0;
     static private int value = 160;
     static private long noDamageTime;
+    private int upgradeCost = 110;
     Vector2 posBotTube;
 
 
@@ -29,5 +30,20 @@ public class FireTube extends Tube {
         super.isTop = isTop;
     }
 
+    @Override
+    public void upgrade(){
+        totalValue = totalValue + upgradeCost;
+        damage = damage * 2;
+        upgradeCost = upgradeCost * 2;
+        totalValue = totalValue + upgradeCost;
+    }
 
+    @Override
+    public int getUpgradeCost() {
+        return upgradeCost;
+    }
+
+    public void setUpgradeCost(int upgradeCost) {
+        this.upgradeCost = upgradeCost;
+    }
 }

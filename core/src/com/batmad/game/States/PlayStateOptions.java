@@ -1,4 +1,6 @@
 package com.batmad.game.States;
+import com.batmad.game.Sprites.Boss1;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,7 +23,15 @@ public class PlayStateOptions  {
         Bird,
         SlowBird,
         FastBird,
-        SprintBird;
+        SprintBird,
+        BirdStupid,
+        BirdHealer,
+        BirdZerg,
+        Boss1,
+        Boss2,
+        Boss3,
+        Boss4,
+        Boss5;
     }
 
     class Wave{

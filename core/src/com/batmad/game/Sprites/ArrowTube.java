@@ -11,15 +11,21 @@ import com.batmad.game.FlappyDefense;
 public class ArrowTube extends Tube{
     static private Texture topTube = new Texture("toptubegrowed.png");
     static private Texture bottomTube = new Texture("bottomtubegrowed.png");
-    Vector2 posTopTube, posBotTube;
-    static private int damage = 5;
-    static private int fireRate = 500;
-    static private int value = 120;
+    Vector2 posBotTube;
+    private int damage = 5;
+    private int fireRate = 500;
+    private int value = 120;
+    private int upgradeCost = 110;
 
     public ArrowTube(float x) {
-        super(x, topTube, bottomTube, damage, fireRate, value);
+        super(x);
+        super.topTube = topTube;
+        super.bottomTube = bottomTube;
+        super.damage = damage;
+        super.fireRate = fireRate;
+        super.value = value;
         posBotTube = new Vector2(x, FlappyDefense.GROUND_Y_OFFSET);
-        posTopTube = new Vector2(x, FlappyDefense.HEIGHT);
+//        posTopTube = new Vector2(x, FlappyDefense.HEIGHT);
     }
 
     public ArrowTube(float x, boolean isTop) {
@@ -27,13 +33,30 @@ public class ArrowTube extends Tube{
         super.isTop = isTop;
     }
 
+    @Override
+    public void upgrade(){
+        totalValue = totalValue + upgradeCost;
+        damage = damage * 2;
+        upgradeCost = upgradeCost * 2;
+        fireRate = fireRate - 70;
+    }
+
     public Bullet fire(Rectangle target){
         //return damage;
         Bullet bullet;
         if(isTop)
-            bullet = new ArrowBullet(posBotTube.x , posTopTube.y - bottomTube.getHeight(), target, damage);
+            bullet = new ArrowBullet(posBotTube.x , posTopTube.y , target, damage);
         else
             bullet = new ArrowBullet(posBotTube.x , posBotTube.y + bottomTube.getHeight(), target, damage);
         return bullet;
+    }
+
+    @Override
+    public int getUpgradeCost() {
+        return upgradeCost;
+    }
+
+    public void setUpgradeCost(int upgradeCost) {
+        this.upgradeCost = upgradeCost;
     }
 }

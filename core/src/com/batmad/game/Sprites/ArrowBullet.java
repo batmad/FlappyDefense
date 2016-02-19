@@ -12,9 +12,11 @@ public class ArrowBullet extends Bullet{
     private static Texture bullet = new Texture("arrow.png");
     private static Sound sound = Gdx.audio.newSound(Gdx.files.internal("arrow.wav"));
 
+
     public ArrowBullet(float x, float y, Rectangle target, int damage) {
         super(x, y, target, damage, bullet, sound);
     }
+
 
 
 }
