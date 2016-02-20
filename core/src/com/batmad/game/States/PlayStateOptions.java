@@ -1,8 +1,8 @@
 package com.batmad.game.States;
-import com.batmad.game.Sprites.Boss1;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Created by tm on 24.01.2016.
@@ -27,6 +27,8 @@ public class PlayStateOptions  {
         BirdStupid,
         BirdHealer,
         BirdZerg,
+        BirdTeleport,
+        BirdAngry,
         Boss1,
         Boss2,
         Boss3,
@@ -35,17 +37,17 @@ public class PlayStateOptions  {
     }
 
     class Wave{
-        HashMap<Bird, Integer> mapOfBirds;
+        TreeMap<Bird, Integer> mapOfBirds;
 
         public Wave(){
-            mapOfBirds = new HashMap<Bird, Integer>();
+            mapOfBirds = new TreeMap<Bird, Integer>();
         }
 
         public void put(Bird birdType, int numberOfBirds){
             mapOfBirds.put(birdType, numberOfBirds);
         }
 
-        public HashMap<Bird, Integer> getMapOfBirds(){
+        public TreeMap<Bird, Integer> getMapOfBirds(){
             return mapOfBirds;
         }
 

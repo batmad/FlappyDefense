@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Rectangle;
  */
 public class ArrowBullet extends Bullet{
     private static Texture bullet = new Texture("arrow.png");
-    private static Sound sound = Gdx.audio.newSound(Gdx.files.internal("arrow.wav"));
+    private static Sound sound = Gdx.audio.newSound(Gdx.files.internal("arrow.ogg"));
 
 
     public ArrowBullet(float x, float y, Rectangle target, int damage) {

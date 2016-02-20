@@ -1,5 +1,7 @@
 package com.batmad.game.Sprites;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 
 /**
@@ -14,11 +16,13 @@ public class BirdZerg extends Bird {
     private int gold = 30;
     private boolean isOverEdge, isDead, isTarget = false;
 
+
     public BirdZerg(int x){
         super(x, texture);
         super.MOVEMENT = MOVEMENT;
         super.birdLifes = birdLifes;
         super.gold = gold;
         super.birdLifesMax = birdLifesMax;
+
     }
 }

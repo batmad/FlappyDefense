@@ -12,11 +12,11 @@ import com.badlogic.gdx.math.Vector2;
 public class Bullet {
     private static final int BULLET_SPEED = 60;
     private Texture bullet = new Texture("ball.png");
-    private Vector2 position, velocity;
-    private Rectangle bounds, target;
+    protected Vector2 position, velocity;
+    protected Rectangle bounds, target;
     private int damage;
     private boolean isFired;
-    private boolean isDead;
+    protected boolean isDead;
     private double range;
     private Sound sound;
 
@@ -30,7 +30,7 @@ public class Bullet {
         this.target = target;
         this.damage = damage;
         isFired = false;
-        sound = Gdx.audio.newSound(Gdx.files.internal("cannon.mp3"));
+        sound = Gdx.audio.newSound(Gdx.files.internal("cannon.ogg"));
     }
 
     public Bullet(float x, float y, Rectangle target, int damage, Texture bullet, Sound sound){
@@ -88,6 +88,6 @@ public class Bullet {
     }
 
     public void sound(){
-        sound.play();
+        sound.play(0.7f);
     }
 }

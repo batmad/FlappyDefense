@@ -9,13 +9,13 @@ import com.batmad.game.FlappyDefense;
  * Created by tm on 22.12.2015.
  */
 public class ArrowTube extends Tube{
-    static private Texture topTube = new Texture("toptubegrowed.png");
-    static private Texture bottomTube = new Texture("bottomtubegrowed.png");
-    Vector2 posBotTube;
+    static private Texture topTube = new Texture("toptube.png");
+    static private Texture bottomTube = new Texture("bottomtube.png");
+//    Vector2 posBotTube;
     private int damage = 5;
-    private int fireRate = 500;
+    private int fireRate = 700;
     private int value = 120;
-    private int upgradeCost = 110;
+    private int upgradeCost = value + 50;
 
     public ArrowTube(float x) {
         super(x);
@@ -24,8 +24,10 @@ public class ArrowTube extends Tube{
         super.damage = damage;
         super.fireRate = fireRate;
         super.value = value;
-        posBotTube = new Vector2(x, FlappyDefense.GROUND_Y_OFFSET);
+//        posBotTube = new Vector2(x, FlappyDefense.GROUND_Y_OFFSET);
 //        posTopTube = new Vector2(x, FlappyDefense.HEIGHT);
+        super.posTopTube = new Vector2(x, FlappyDefense.HEIGHT - FlappyDefense.GROUND_Y_OFFSET - topTube.getHeight());
+        super.boundsBot = new Rectangle(posBotTube.x, posBotTube.y, bottomTube.getWidth(), bottomTube.getHeight());
     }
 
     public ArrowTube(float x, boolean isTop) {

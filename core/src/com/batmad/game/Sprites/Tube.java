@@ -14,16 +14,21 @@ public class Tube {
     public static final int TUBE_WIDTH = 52;
     protected Texture topTube = new Texture("toptubeclosed.png");
     protected Texture bottomTube = new Texture("bottomtubeclosed.png");
+    protected Texture destoyedTube = new Texture("bottomtubedestroyed.png");
     protected Vector2 posTopTube, posBotTube;
-    private Rectangle boundsTop, boundsBot, fieldOfView;
+    protected Rectangle boundsTop, boundsBot, fieldOfView;
     protected int damage;
     protected int value;
     protected int totalValue;
+    protected int repairValue;
     protected int fireRate;
     protected long clearSky;
     protected Rectangle target;
     protected boolean hasTarget;
     public boolean isTop;
+    public boolean isBroken;
+
+
 
 
     public Tube(float x){
@@ -39,6 +44,8 @@ public class Tube {
         //fireRate = 500;
         clearSky = 0;
         value = 120;
+        repairValue = 50;
+        isBroken = false;
         totalValue = value;
     }
 
@@ -141,6 +148,14 @@ public class Tube {
         //NOP
     }
 
+    public void repair(){
+        isBroken = false;
+    }
+
+    public Texture getDestoyedTube() {
+        return destoyedTube;
+    }
+
     public int getTotalValue() {
         return totalValue;
     }
@@ -163,6 +178,10 @@ public class Tube {
 
     public void setHasTarget(boolean hasTarget) {
         this.hasTarget = hasTarget;
+    }
+
+    public int getRepairValue() {
+        return repairValue;
     }
 
 }

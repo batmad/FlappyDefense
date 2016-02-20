@@ -28,7 +28,7 @@ public class Bird {
     protected int birdLifes = 15;
     protected int birdLifesMax = birdLifes;
     protected int gold = 20;
-    private boolean isOverEdge, isDead, isTarget = false;
+    protected boolean isOverEdge, isDead, isTarget = false;
     private long lastHealedTimeStamp;
 
     public Bird(int x, int y){
