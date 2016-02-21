@@ -1,7 +1,6 @@
 package com.batmad.game.Sprites;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.batmad.game.FlappyDefense;
 
 import java.util.Random;

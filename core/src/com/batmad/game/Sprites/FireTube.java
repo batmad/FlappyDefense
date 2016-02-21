@@ -11,9 +11,9 @@ import com.batmad.game.FlappyDefense;
 public class FireTube extends Tube {
     static private Texture topTube = new Texture("toptube.png");
     static private Texture bottomTube = new Texture("bottomtube.png");
-    static private int damage = 4;
-    static private int fireRate = 0;
-    static private int value = 160;
+    private int damage = 4;
+    private int fireRate = 0;
+    private int value = super.valueFire;
     static private long noDamageTime;
     private int upgradeCost = value + 50;
 //    Vector2 posBotTube;
@@ -30,6 +30,8 @@ public class FireTube extends Tube {
         super.posTopTube = new Vector2(x, FlappyDefense.HEIGHT - FlappyDefense.GROUND_Y_OFFSET - topTube.getHeight());
         super.boundsBot = new Rectangle(posBotTube.x, posBotTube.y, bottomTube.getWidth(), bottomTube.getHeight());
         super.boundsTop = new Rectangle(posTopTube.x, posTopTube.y, topTube.getWidth(), topTube.getHeight());
+        super.range = 120;
+        super.fieldOfView = new Rectangle(x + topTube.getWidth()/2 - range / 2, 0, range, 480);
     }
 
     public FireTube(float x, boolean isTop){
@@ -41,9 +43,9 @@ public class FireTube extends Tube {
     @Override
     public void upgrade(){
         totalValue = totalValue + upgradeCost;
-        damage = damage * 2;
-        upgradeCost = upgradeCost * 2;
-        totalValue = totalValue + upgradeCost;
+        damage = damage + 2;
+        upgradeCost = upgradeCost + value + 25;
+        range = range + 7;
     }
 
     @Override

@@ -14,7 +14,7 @@ public class ArrowTube extends Tube{
 //    Vector2 posBotTube;
     private int damage = 5;
     private int fireRate = 700;
-    private int value = 120;
+    private int value = super.valueArrow;
     private int upgradeCost = value + 50;
 
     public ArrowTube(float x) {
@@ -29,6 +29,8 @@ public class ArrowTube extends Tube{
         super.posTopTube = new Vector2(x, FlappyDefense.HEIGHT - FlappyDefense.GROUND_Y_OFFSET - topTube.getHeight());
         super.boundsBot = new Rectangle(posBotTube.x, posBotTube.y, bottomTube.getWidth(), bottomTube.getHeight());
         super.boundsTop = new Rectangle(posTopTube.x, posTopTube.y, topTube.getWidth(), topTube.getHeight());
+        super.range = 150;
+        super.fieldOfView = new Rectangle(x + topTube.getWidth()/2 - range / 2, 0, range, 480);
     }
 
     public ArrowTube(float x, boolean isTop) {
@@ -39,9 +41,10 @@ public class ArrowTube extends Tube{
     @Override
     public void upgrade(){
         totalValue = totalValue + upgradeCost;
-        damage = damage * 2;
-        upgradeCost = upgradeCost * 2;
-        fireRate = fireRate - 70;
+        damage = damage + 3;
+        upgradeCost = upgradeCost + value + 25;
+        fireRate = fireRate - 30;
+        range = range + 10;
     }
 
     public Bullet fire(Rectangle target){

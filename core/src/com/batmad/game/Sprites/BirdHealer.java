@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
 import com.batmad.game.FlappyDefense;
 
-import java.util.Random;
 
 /**
  * Created by tm on 19.02.2016.

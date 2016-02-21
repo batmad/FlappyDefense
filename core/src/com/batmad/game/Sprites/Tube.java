@@ -19,9 +19,13 @@ public class Tube {
     protected Rectangle boundsTop, boundsBot, fieldOfView;
     protected int damage;
     protected int value;
+    protected int valueArrow;
+    protected int valueFire;
+    protected int valueCannon;
     protected int totalValue;
     protected int repairValue;
     protected int fireRate;
+    protected int range;
     protected long clearSky;
     protected Rectangle target;
     protected boolean hasTarget;
@@ -38,12 +42,16 @@ public class Tube {
         boundsTop = new Rectangle(posTopTube.x, posTopTube.y, topTube.getWidth(), topTube.getHeight());
         boundsBot = new Rectangle(posBotTube.x, posBotTube.y, bottomTube.getWidth(), bottomTube.getHeight());
 
-        fieldOfView = new Rectangle(x + topTube.getWidth()/2 - 50, posBotTube.y, 100, 480);
+        range = 100;
+        fieldOfView = new Rectangle(x + topTube.getWidth()/2 - range / 2, 0, range, 480);
 
         //damage = 5;
         //fireRate = 500;
         clearSky = 0;
         value = 120;
+        valueArrow = 120;
+        valueCannon = 150;
+        valueFire = 160;
         repairValue = 50;
         isBroken = false;
         totalValue = value;
@@ -185,4 +193,15 @@ public class Tube {
         return repairValue;
     }
 
+    public int getValueArrow() {
+        return valueArrow;
+    }
+
+    public int getValueCannon() {
+        return valueCannon;
+    }
+
+    public int getValueFire() {
+        return valueFire;
+    }
 }

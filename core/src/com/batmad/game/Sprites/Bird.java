@@ -30,6 +30,7 @@ public class Bird {
     protected int gold = 20;
     protected boolean isOverEdge, isDead, isTarget = false;
     private long lastHealedTimeStamp;
+    Random rand;
 
     public Bird(int x, int y){
         position = new Vector3(x,y,0);
@@ -38,6 +39,7 @@ public class Bird {
         bounds = new Rectangle(x, y, texture.getWidth()/3, texture.getHeight());
         flap = Gdx.audio.newSound(Gdx.files.internal("sfx_wing.ogg"));
         isOverEdge = false;
+        rand = new Random();
     }
 
     public Bird(){
@@ -106,7 +108,6 @@ public class Bird {
     }
 
     public void jump(){
-        Random rand = new Random();
         velocity.y = 250 + rand.nextInt(100);
         if (position.x > 0 && position.x < FlappyDefense.WIDTH )
             flap.play(0.05f);
