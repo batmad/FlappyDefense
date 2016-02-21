@@ -12,8 +12,8 @@ import java.util.Random;
 public class BirdHealer extends Bird {
     static private Texture texture = new Texture("bird/birdanimationhealer.png");
     private int MIN_HEIGHT = 240;
-    private int MOVEMENT = 45;
-    private int birdLifes = 20;
+    private int MOVEMENT = 60;
+    private int birdLifes = 30;
     private int birdLifesMax = birdLifes;
     private int gold = 100;
     public int heal = 10;

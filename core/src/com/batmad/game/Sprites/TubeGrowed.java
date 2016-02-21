@@ -17,7 +17,7 @@ public class TubeGrowed extends Tube {
 //    Vector2 posTopTube, posBotTube;
     Rectangle boundsBot, boundsTop, fieldOfView;
     static private int damage = 20;
-    static private int fireRate = 1500;
+    static private int fireRate = 1200;
     static private int value = 150;
     private int upgradeCost = value + 50;
 
@@ -30,6 +30,7 @@ public class TubeGrowed extends Tube {
         super.value = value;
         super.posTopTube = new Vector2(x, FlappyDefense.HEIGHT - FlappyDefense.GROUND_Y_OFFSET - topTube.getHeight());
         super.boundsBot = new Rectangle(posBotTube.x, posBotTube.y, bottomTube.getWidth(), bottomTube.getHeight());
+        super.boundsTop = new Rectangle(posTopTube.x, posTopTube.y, topTube.getWidth(), topTube.getHeight());
     }
 
     public TubeGrowed(float x, boolean isTop) {

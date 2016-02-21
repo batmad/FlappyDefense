@@ -29,6 +29,7 @@ public class FireTube extends Tube {
         posBotTube = new Vector2(x, FlappyDefense.GROUND_Y_OFFSET);
         super.posTopTube = new Vector2(x, FlappyDefense.HEIGHT - FlappyDefense.GROUND_Y_OFFSET - topTube.getHeight());
         super.boundsBot = new Rectangle(posBotTube.x, posBotTube.y, bottomTube.getWidth(), bottomTube.getHeight());
+        super.boundsTop = new Rectangle(posTopTube.x, posTopTube.y, topTube.getWidth(), topTube.getHeight());
     }
 
     public FireTube(float x, boolean isTop){

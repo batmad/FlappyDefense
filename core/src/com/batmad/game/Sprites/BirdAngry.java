@@ -13,7 +13,7 @@ public class BirdAngry extends Bird {
     static private Texture texture = new Texture("bird/birdanimationangry.png");
     private int MIN_HEIGHT = 225;
     private int MOVEMENT = 70;
-    private int birdLifes = 50;
+    private int birdLifes = 30;
     private int birdLifesMax = birdLifes;
     private int gold = 40;
     private boolean isOverEdge, isDead, isTarget = false;
@@ -30,9 +30,11 @@ public class BirdAngry extends Bird {
         super.birdLifes = birdLifes;
         super.gold = gold;
         super.birdLifesMax = birdLifesMax;
+        super.MIN_HEIGHT = MIN_HEIGHT;
         rand = new Random();
         fireRect = new Rectangle(this.position.x, 0, texture.getWidth()/3, FlappyDefense.HEIGHT / 2);
         fireRate = 500;
+
     }
 
     @Override

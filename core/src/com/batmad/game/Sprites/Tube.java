@@ -142,6 +142,7 @@ public class Tube {
     public void dispose(){
         topTube.dispose();
         bottomTube.dispose();
+        destoyedTube.dispose();
     }
 
     public void upgrade(){

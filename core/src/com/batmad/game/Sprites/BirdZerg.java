@@ -23,6 +23,7 @@ public class BirdZerg extends Bird {
         super.birdLifes = birdLifes;
         super.gold = gold;
         super.birdLifesMax = birdLifesMax;
+        super.MIN_HEIGHT = MIN_HEIGHT;
 
     }
 }

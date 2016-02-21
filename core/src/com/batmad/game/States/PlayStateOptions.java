@@ -29,6 +29,8 @@ public class PlayStateOptions  {
         BirdZerg,
         BirdTeleport,
         BirdAngry,
+        BirdFire,
+        BirdSuicide,
         Boss1,
         Boss2,
         Boss3,

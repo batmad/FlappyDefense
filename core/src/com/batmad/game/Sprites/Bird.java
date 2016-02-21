@@ -17,7 +17,7 @@ import java.util.Random;
 public class Bird {
     public static final int GRAVITY = -15;
     public int MOVEMENT = 100;
-    private static final int MIN_HEIGHT = 200;
+    protected static int MIN_HEIGHT = 200;
     protected Vector3 position;
     protected Vector3 velocity;
     protected Rectangle bounds;

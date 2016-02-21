@@ -11,7 +11,7 @@ public class SprintBird extends Bird {
     private int sprintMovement = 300;
     protected int birdLifes = 5;
     protected int birdLifesMax = birdLifes;
-    protected int gold = 40;
+    protected int gold = 35;
 
     public SprintBird(int x){
         super(x, texture);

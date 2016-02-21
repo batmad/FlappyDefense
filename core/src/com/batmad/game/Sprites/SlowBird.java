@@ -11,7 +11,7 @@ public class SlowBird extends Bird {
     private int MOVEMENT = 30;
     private int birdLifes = 50;
     private int birdLifesMax = birdLifes;
-    private int gold = 40;
+    private int gold = 50;
     private boolean isOverEdge, isDead, isTarget = false;
 
     public SlowBird(int x){

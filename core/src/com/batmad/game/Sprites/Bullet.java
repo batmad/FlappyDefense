@@ -90,4 +90,9 @@ public class Bullet {
     public void sound(){
         sound.play(0.7f);
     }
+
+    public void dispose(){
+        bullet.dispose();
+        sound.dispose();
+    }
 }

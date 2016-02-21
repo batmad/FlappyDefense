@@ -10,7 +10,7 @@ public class Boss2 extends Bird {
     static private Texture texture = new Texture("bird/boss2.png");
     private int MIN_HEIGHT = 150;
     private int MOVEMENT = 30;
-    private int birdLifes = 600;
+    private int birdLifes = 1200;
     private int birdLifesMax = birdLifes;
     private int gold = 400;
     private Texture lifeTexture = new Texture("bird/bosslife.png");;

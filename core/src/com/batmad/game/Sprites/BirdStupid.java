@@ -11,8 +11,8 @@ import java.util.Random;
  */
 public class BirdStupid extends Bird {
     static private Texture texture = new Texture("bird/birdanimationstupid.png");
-    private int MIN_HEIGHT = 150;
-    private int MOVEMENT = 45;
+    private int MIN_HEIGHT = 175;
+    private int MOVEMENT = 20;
     private int birdLifes = 100;
     private int birdLifesMax = birdLifes;
     private int gold = 100;
