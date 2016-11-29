@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Google Play game services IDs.
+Save this file as res/values/games-ids.xml in your project.
+-->
+<resources>
+    <string name="app_id">658332538143</string>
+    <string name="package_name">com.batmad.birddefense</string>
+    <string name="achievement_conquest">CgkIn6q1vZQTEAIQAg</string>
+    <string name="achievement_war">CgkIn6q1vZQTEAIQAw</string>
+    <string name="achievement_famine">CgkIn6q1vZQTEAIQBA</string>
+    <string name="achievement_death">CgkIn6q1vZQTEAIQBQ</string>
+    <string name="achievement_apocalypse">CgkIn6q1vZQTEAIQBg</string>
+    <string name="leaderboard_highscore">CgkIn6q1vZQTEAIQAQ</string>
+    <string name="banner_ad_unit_id">ca-app-pub-6921619675717698/1259571367</string>
+    <string name="google_play_key">MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqa8e9EmhKDusrtGKKWrY3GvuGRH47ZoljXEXFeYW5Sx5t5YrA3ESKlLGeaJh2TzXSF2ZPOytuUZCgfBnSSAZ9CrirU0fRAykakDOVVNOgtmEloYjYLpNqjkeRNuEOXar3vhk+CqS7d1QqcbSutDaDVU/ChQAFqBsXb3GuYZiEco2R/J6kh1XtRDuslzw4M5ZuF3yOt0DN0buzqRq3PjjxIiLi6I+NQljhMPZfdHtz935zlJjpoIWTsAA/2I1ZT+lSPtVQHHlYv78HgeJZiIzUOSRJJK8oXyR+5ipsZLmxGsxuCah5aMh2KF9QKgC35PxnnuQST/bFW3Z7TkQWaoSeQIDAQAB</string>
+</resources>
